@@ -1,0 +1,26 @@
+#!/bin/sh
+
+echo VRM Diag Script
+cd /usr/local/stretch/bin
+./load
+./diag/sdvr_diag 0 vrm7008_diag.rom
+cd /
+mount -t ext2 /dev/sda1 /mnt
+if [ $? != "0" ] ; then echo SATA mount test fail
+    else
+        cp /etc/passwd /mnt;
+        diff /etc/passwd /mnt/passwd;
+        if [ $? = "0" ] ; then echo SATA test pass; else echo SATA diff test Fail; fi
+        umount /dev/sda1;
+    fi
+
+mount -t vfat /dev/sdb1 /mnt
+if [ $? != "0" ] ; then echo USB mount test fail
+    else
+        cp /etc/passwd /mnt;
+        diff /etc/passwd /mnt/passwd;
+        if [ $? = "0" ] ; then echo USB test pass; else echo USB diff test Fail; fi
+        umount /dev/sdb1;
+    fi
+
+

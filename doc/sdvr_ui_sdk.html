@@ -1,0 +1,2541 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META http-equiv="content-type" content="text/html; charset=iso-8859-1">
+
+<TITLE>DVR Display SDK (sdvr_ui_sdk) (Stretch)</title>
+<SCRIPT TYPE="text/javascript" LANGUAGE="JavaScript1.2">
+<!--
+function get_cookie(name) 
+{
+    var start = document.cookie.indexOf(name + "=");
+    var len = start+name.length + 1;
+    if (! start && name != document.cookie.substring(0,name.length)) {
+	return null;
+    }
+    if (start == -1) {
+	return null;
+    }
+    var end = document.cookie.indexOf(";", len);
+    if (end == -1) {
+	end = document.cookie.length;
+    }
+    return unescape(document.cookie.substring(len, end));
+}
+
+function set_cookie(name, value, expires, path, domain, secure) 
+{
+    document.cookie = name + "=" + escape(value) +
+	( expires ? ";expires=" + expires.toGMTString() : "") +
+	( path ? ";path=" + path : "") + 
+	( domain ? ";domain=" + domain : "") +
+	( secure ? ";secure" : "");
+}
+
+function put_style(style) {
+    var expires = new Date();
+    expires.setTime(expires.getTime() + 365 * 24 * 60 * 60 * 1000);
+    set_cookie('cdoc_style', style, expires);
+}
+
+function get_style() {
+    var style = get_cookie('cdoc_style');
+    if (style == null) {
+	style = 'relative';
+	put_style(style);
+    }
+    return style;
+}
+
+function click_put_style(style) {
+    put_style(style);
+    location.reload();
+}
+
+document.writeln('<STYLE TYPE="text/css">');
+document.writeln('<!--');
+var style = get_style();
+if (style == 'fixed-10pt') {
+	document.writeln('@media screen {');
+	document.writeln('    BODY {');
+	document.writeln('	background: rgb(220, 220, 220);');
+	document.writeln('	margin-left: .25in;');
+	document.writeln('	margin-right: .25in;');
+	document.writeln('    }');
+	document.writeln('}');
+	document.writeln('BODY {');
+	document.writeln('    font-family: Arial, sans-serif;');
+	document.writeln('    font-size: 10pt;');
+	document.writeln('    text-align: justify;');
+	document.writeln('}');
+	document.writeln('H1 {');
+	document.writeln('    font-size: 18pt;');
+	document.writeln('    color: rgb(255, 0, 0);');
+	document.writeln('    text-align: center;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H2 {');
+	document.writeln('    font-size: 14pt;');
+	document.writeln('    color: rgb(0, 0, 255);');
+	document.writeln('    margin-top: 14pt;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H2.int {');
+	document.writeln('    font-size: 14pt;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('    margin-top: 14pt;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H3 {');
+	document.writeln('    font-size: 12pt;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('A {');
+	document.writeln('    text-decoration: none;');
+	document.writeln('}');
+	document.writeln('A:link {');
+	document.writeln('    color: rgb(48, 96, 255);');
+	document.writeln('}');
+	document.writeln('A:visited {');
+	document.writeln('    color: rgb(48, 96, 255);');
+	document.writeln('}');
+	document.writeln('A:hover { ');
+	document.writeln('    background: rgb(255, 255, 0);');
+	document.writeln('} ');
+	document.writeln('PRE.cdef A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdef A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdef {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-weight: bold;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-weight: bold;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.ccode A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.ccode A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.ccode {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-size: 9pt;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.text A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.text A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.text {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-size: 9pt;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('TD.int A:link {');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('TD.int A:visited {');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('DIV.descr {');
+	document.writeln('   padding-left: 20pt;');
+	document.writeln('}');
+	document.writeln('* UL {');
+	document.writeln('    list-style: disc;');
+	document.writeln('}');
+	document.writeln('* LI {');
+	document.writeln('    margin-top: 5pt;');
+	document.writeln('}');
+	document.writeln('TABLE {');
+	document.writeln('    font-size: 10pt;');
+	document.writeln('    margin-top: 0in;');
+	document.writeln('    margin-bottom: 0in;');
+	document.writeln('}');
+	document.writeln('TABLE.index {');
+	document.writeln('    font-size: 9pt;');
+	document.writeln('    margin-top: 0in;');
+	document.writeln('    margin-bottom: 0in;');
+	document.writeln('}');
+} else if (style == 'fixed-12pt') {
+	document.writeln('@media screen {');
+	document.writeln('    BODY {');
+	document.writeln('	background: rgb(220, 220, 220);');
+	document.writeln('	margin-left: .25in;');
+	document.writeln('	margin-right: .25in;');
+	document.writeln('    }');
+	document.writeln('}');
+	document.writeln('BODY {');
+	document.writeln('    font-family: Arial, sans-serif;');
+	document.writeln('    font-size: 12pt;');
+	document.writeln('    text-align: justify;');
+	document.writeln('}');
+	document.writeln('H1 {');
+	document.writeln('    font-size: 18pt;');
+	document.writeln('    color: rgb(255, 0, 0);');
+	document.writeln('    text-align: center;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H2 {');
+	document.writeln('    font-size: 16pt;');
+	document.writeln('    color: rgb(0, 0, 255);');
+	document.writeln('    margin-top: 16pt;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H2.int {');
+	document.writeln('    font-size: 16pt;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('    margin-top: 16pt;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H3 {');
+	document.writeln('    font-size: 14pt;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('A {');
+	document.writeln('    text-decoration: none;');
+	document.writeln('}');
+	document.writeln('A:link {');
+	document.writeln('    color: rgb(48, 96, 255);');
+	document.writeln('}');
+	document.writeln('A:visited {');
+	document.writeln('    color: rgb(48, 96, 255);');
+	document.writeln('}');
+	document.writeln('A:hover { ');
+	document.writeln('    background: rgb(255, 255, 0);');
+	document.writeln('} ');
+	document.writeln('PRE.cdef A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdef A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdef {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-weight: bold;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-weight: bold;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.ccode A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.ccode A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.ccode {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-size: 10pt;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.text A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.text A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.text {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-size: 10pt;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('TD.int A:link {');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('TD.int A:visited {');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('DIV.descr {');
+	document.writeln('   padding-left: 24pt;');
+	document.writeln('}');
+	document.writeln('* UL {');
+	document.writeln('    list-style: disc;');
+	document.writeln('}');
+	document.writeln('* LI {');
+	document.writeln('    margin-top: 6pt;');
+	document.writeln('}');
+	document.writeln('TABLE {');
+	document.writeln('    font-size: 12pt;');
+	document.writeln('    margin-top: 0in;');
+	document.writeln('    margin-bottom: 0in;');
+	document.writeln('}');
+	document.writeln('TABLE.index {');
+	document.writeln('    font-size: 10pt;');
+	document.writeln('    margin-top: 0in;');
+	document.writeln('    margin-bottom: 0in;');
+	document.writeln('}');
+} else {
+	document.writeln('@media screen {');
+	document.writeln('    BODY {');
+	document.writeln('	background: rgb(220, 220, 220);');
+	document.writeln('	margin-left: .25in;');
+	document.writeln('	margin-right: .25in;');
+	document.writeln('    }');
+	document.writeln('}');
+	document.writeln('BODY {');
+	document.writeln('    font-family: Arial, sans-serif;');
+	document.writeln('    font-size: 1em;');
+	document.writeln('    text-align: justify;');
+	document.writeln('}');
+	document.writeln('H1 {');
+	document.writeln('    font-size: 1.8em;');
+	document.writeln('    color: rgb(255, 0, 0);');
+	document.writeln('    text-align: center;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H2 {');
+	document.writeln('    font-size: 1.4em;');
+	document.writeln('    color: rgb(0, 0, 255);');
+	document.writeln('    margin-top: 1.4em;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H2.int {');
+	document.writeln('    font-size: 1.4em;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('    margin-top: 1.4em;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H3 {');
+	document.writeln('    font-size: 1.2em;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('A {');
+	document.writeln('    text-decoration: none;');
+	document.writeln('}');
+	document.writeln('A:link {');
+	document.writeln('    color: rgb(48, 96, 255);');
+	document.writeln('}');
+	document.writeln('A:visited {');
+	document.writeln('    color: rgb(48, 96, 255);');
+	document.writeln('}');
+	document.writeln('A:hover { ');
+	document.writeln('    background: rgb(255, 255, 0);');
+	document.writeln('} ');
+	document.writeln('PRE.cdef A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdef A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdef {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-weight: bold;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-weight: bold;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.ccode A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.ccode A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.ccode {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-size: 0.9em;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.text A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.text A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.text {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-size: 0.9em;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('TD.int A:link {');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('TD.int A:visited {');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('DIV.descr {');
+	document.writeln('   padding-left: 2em;');
+	document.writeln('}');
+	document.writeln('* UL {');
+	document.writeln('    list-style: disc;');
+	document.writeln('}');
+	document.writeln('* LI {');
+	document.writeln('    margin-top: 0.5em;');
+	document.writeln('}');
+	document.writeln('TABLE {');
+	document.writeln('    font-size: 1em;');
+	document.writeln('    margin-top: 0in;');
+	document.writeln('    margin-bottom: 0in;');
+	document.writeln('}');
+	document.writeln('TABLE.index {');
+	document.writeln('    font-size: 0.9em;');
+	document.writeln('    margin-top: 0in;');
+	document.writeln('    margin-bottom: 0in;');
+	document.writeln('}');
+}
+document.writeln('-->');
+document.writeln('</STYLE>');
+//-->
+</SCRIPT>
+</HEAD>
+
+<BODY>
+
+<H1>DVR Display SDK (sdvr_ui_sdk) &nbsp; (Stretch)</H1>
+
+<CENTER>Last modified on May 15, 2013 at 02:00 UTC</CENTER>
+<!-- CDOC-CHOOSE-STYLE --><CENTER>
+<!-- CDOC-CHOOSE-STYLE --><A HREF="javascript:click_put_style('relative');">normal, </A>
+<!-- CDOC-CHOOSE-STYLE --><A HREF="javascript:click_put_style('fixed-10pt');">10pt, </A>
+<!-- CDOC-CHOOSE-STYLE --><A HREF="javascript:click_put_style('fixed-12pt');">12pt</A>
+<!-- CDOC-CHOOSE-STYLE --></CENTER>
+
+<!-- last_modified : May 15, 2013 at 02:00 UTC -->
+
+<!-- package : Stretch -->
+
+<!-- short-description : DVR Display SDK (sdvr_ui_sdk) -->
+
+<!-- contact_name :  -->
+
+<!-- contact_email :  -->
+
+<!-- copyright :  -->
+
+<!-- cdoc-version : 2.4.5 -->
+<!-- ANCHOR_TABLE
+"Package"	"Stretch"	"sdvr_ui_sdk.html"
+"Section"	"Include"	"Top__Include"
+"Section"	"Introduction"	"Top__Introduction"
+"Section"	"Linking with UI SDK API on the MS Window Platform"	"Top__Linking___with___UI___SDK___API___on___the___MS___Window___Platform"
+"Section"	"Linking with UI SDK API on the Linux Platform"	"Top__Linking___with___UI___SDK___API___on___the___Linux___Platform"
+"Section"	"Using the UI SDK API to preview raw video frames"	"Top__Using___the___UI___SDK___API___to___preview___raw___video___frames"
+"Section"	"Using the UI SDK API to play raw video frames"	"Top__Using___the___UI___SDK___API___to___play___raw___video___frames"
+"Section"	"Important Restrictions"	"Top__Important___Restrictions"
+"Section"	"Types"	"Top__Types"
+"Typedef"	"sdvr_err_ui_e"	"Types__sdvr_err_ui_e"
+"Typedef"	"SDVR_ERR_UI_INIT"	"Types__SDVR_ERR_UI_INIT"
+"Typedef"	"SDVR_ERR_UI_INVALID_PARAM"	"Types__SDVR_ERR_UI_INVALID_PARAM"
+"Typedef"	"SDVR_ERR_UI_SET_BUFFER"	"Types__SDVR_ERR_UI_SET_BUFFER"
+"Typedef"	"SDVR_ERR_UI_DRAW_YUV"	"Types__SDVR_ERR_UI_DRAW_YUV"
+"Typedef"	"SDVR_ERR_UI_INVALID_YUV_BUF"	"Types__SDVR_ERR_UI_INVALID_YUV_BUF"
+"Typedef"	"SDVR_ERR_UI_VIDEO_SIZE"	"Types__SDVR_ERR_UI_VIDEO_SIZE"
+"Typedef"	"SDVR_ERR_UI_NO_BUFFER"	"Types__SDVR_ERR_UI_NO_BUFFER"
+"Typedef"	"SDVR_ERR_UI_MAX_PREVIEW_REGIONS"	"Types__SDVR_ERR_UI_MAX_PREVIEW_REGIONS"
+"Typedef"	"SDVR_ERR_UI_DRAWINFO_FULL"	"Types__SDVR_ERR_UI_DRAWINFO_FULL"
+"Typedef"	"SDVR_ERR_UI_CHANNEL_NOT_START"	"Types__SDVR_ERR_UI_CHANNEL_NOT_START"
+"Typedef"	"SDVR_ERR_UI_NO_INIT"	"Types__SDVR_ERR_UI_NO_INIT"
+"Typedef"	"SDVR_ERR_UI_MEMORY"	"Types__SDVR_ERR_UI_MEMORY"
+"Typedef"	"SDVR_ERR_UI_AUDIO_PREVIEW"	"Types__SDVR_ERR_UI_AUDIO_PREVIEW"
+"Typedef"	"SDVR_ERR_UI_UNSUPPORTED"	"Types__SDVR_ERR_UI_UNSUPPORTED"
+"Typedef"	"sdvr_ui_video_preview_mode"	"Types__sdvr_ui_video_preview_mode"
+"Typedef"	"SDVR_UI_PREVIEW_MODE_1"	"Types__SDVR_UI_PREVIEW_MODE_1"
+"Typedef"	"SDVR_UI_PREVIEW_MODE_2"	"Types__SDVR_UI_PREVIEW_MODE_2"
+"Typedef"	"SDVR_UI_PREVIEW_MODE_3"	"Types__SDVR_UI_PREVIEW_MODE_3"
+"Typedef"	"SDVR_UI_PREVIEW_MODE_MAX"	"Types__SDVR_UI_PREVIEW_MODE_MAX"
+"Typedef"	"sdvr_ui_init_def_t"	"Types__sdvr_ui_init_def_t"
+"Typedef"	"sdvr_ui_region_t"	"Types__sdvr_ui_region_t"
+"Typedef"	"sdvr_ui_hwnd_t"	"Types__sdvr_ui_hwnd_t"
+"Typedef"	"sdvr_ui_color_key_t"	"Types__sdvr_ui_color_key_t"
+"Typedef"	"sdvr_ui_preview_cb"	"Types__sdvr_ui_preview_cb"
+"Section"	"Defines"	"Top__Defines"
+"Define"	"SDVR_UI_ERR_NONE"	"Defines__SDVR_UI_ERR_NONE"
+"Define"	"SDVR_MAX_DRAW_REGIONS"	"Defines__SDVR_MAX_DRAW_REGIONS"
+"Define"	"SDVR_UI_LS_SOLID"	"Defines__SDVR_UI_LS_SOLID"
+"Define"	"SDVR_UI_LS_DASH"	"Defines__SDVR_UI_LS_DASH"
+"Define"	"SDVR_UI_LS_DOT"	"Defines__SDVR_UI_LS_DOT"
+"Define"	"SDVR_UI_DIRECTDRAW_NOLOCK"	"Defines__SDVR_UI_DIRECTDRAW_NOLOCK"
+"Section"	"Routines"	"Top__Routines"
+"Section"	"The Video Preview APIs"	"Routines__The___Video___Preview___APIs"
+"Routine"	"sdvr_ui_init"	"Routines__sdvr_ui_init"
+"Routine"	"sdvr_ui_init_ex"	"Routines__sdvr_ui_init_ex"
+"Routine"	"sdvr_ui_init_audio"	"Routines__sdvr_ui_init_audio"
+"Routine"	"sdvr_ui_close"	"Routines__sdvr_ui_close"
+"Routine"	"sdvr_ui_set_key_color"	"Routines__sdvr_ui_set_key_color"
+"Routine"	"sdvr_ui_set_buffer"	"Routines__sdvr_ui_set_buffer"
+"Routine"	"sdvr_ui_draw_yuv"	"Routines__sdvr_ui_draw_yuv"
+"Routine"	"sdvr_ui_draw_frame"	"Routines__sdvr_ui_draw_frame"
+"Routine"	"sdvr_ui_refresh"	"Routines__sdvr_ui_refresh"
+"Routine"	"sdvr_ui_clear_yuv"	"Routines__sdvr_ui_clear_yuv"
+"Routine"	"sdvr_ui_version"	"Routines__sdvr_ui_version"
+"Routine"	"sdvr_ui_start_video_preview"	"Routines__sdvr_ui_start_video_preview"
+"Routine"	"sdvr_ui_start_video_preview_ex"	"Routines__sdvr_ui_start_video_preview_ex"
+"Routine"	"sdvr_ui_stop_video_preview"	"Routines__sdvr_ui_stop_video_preview"
+"Routine"	"sdvr_ui_set_preview_callback"	"Routines__sdvr_ui_set_preview_callback"
+"Routine"	"sdvr_ui_internal_setup"	"Routines__sdvr_ui_internal_setup"
+"Section"	"The Audio Preview APIs"	"Routines__The___Audio___Preview___APIs"
+"Routine"	"sdvr_ui_start_audio_preview"	"Routines__sdvr_ui_start_audio_preview"
+"Routine"	"sdvr_ui_stop_audio_preview"	"Routines__sdvr_ui_stop_audio_preview"
+"Routine"	"sdvr_ui_adjust_volume"	"Routines__sdvr_ui_adjust_volume"
+"Section"	"Miscellaneous"	"Routines__Miscellaneous"
+"Routine"	"sdvr_rgb"	"Routines__sdvr_rgb"
+-->
+
+<P>
+Contents: <A href="#Top__Table___of___Contents">Table of Contents</A>, 
+<A href="#Top__Include">Include</A>, 
+<A href="#Top__Introduction">Introduction</A>, 
+<A href="#Top__Linking___with___UI___SDK___API___on___the___MS___Window___Platform">Linking with UI SDK API on the MS Window Platform</A>, 
+<A href="#Top__Linking___with___UI___SDK___API___on___the___Linux___Platform">Linking with UI SDK API on the Linux Platform</A>, 
+<A href="#Top__Using___the___UI___SDK___API___to___preview___raw___video___frames">Using the UI SDK API to preview raw video frames</A>, 
+<A href="#Top__Using___the___UI___SDK___API___to___play___raw___video___frames">Using the UI SDK API to play raw video frames</A>, 
+<A href="#Top__Important___Restrictions">Important Restrictions</A>, 
+<A href="#Top__Types">Types</A>, 
+<A href="#Top__Defines">Defines</A>, 
+<A href="#Top__Routines">Routines</A>, 
+<A href="#Top__Index">Index</A>, 
+<!-- MASTER_INDEX --> <A HREF="index.html">Package List</A>
+</P>
+
+
+<!-- SEC_DESCRIPTION_START -->
+
+<a name="Top__Include"></a>
+<H2>1 &nbsp; Include</H2>
+<PRE class="ccode">
+#include "sdvr_ui_sdk.h" 
+</PRE>
+
+<a name="Top__Introduction"></a>
+<H2>2 &nbsp; Introduction</H2>
+In conjunction with the Stretch DVR SDK, there is a UI SDK library that lets you 
+display raw video frames on the display monitor and play raw audio frames. 
+<P>
+This is an optional library that can be added to your Stretch DVR Application 
+development environment.  If you are developing an embedded  DVR 
+Application or choose to use a different 
+display/audio API, you may choose not to include this library. 
+</P>
+<P>
+This document describes the Application Programming Interface (API) 
+implemented in the UI SDK. 
+</P>
+<P>
+The SDK provides the ability to: 
+</P>
+<UL>
+<LI>
+Display the specified raw video frame into one or more regions 
+within a given window. 
+</LI>
+<LI>
+Display a raw video frame in a rectangle within a display window. 
+</LI>
+<LI>
+Clear the contents of a rectangle within a display window. 
+</LI>
+</UL>
+
+<a name="Top__Linking___with___UI___SDK___API___on___the___MS___Window___Platform"></a>
+<H2>3 &nbsp; Linking with UI SDK API on the MS Window Platform</H2>
+This library uses DirectX functions to draw directly into the 
+video buffer and play sound. As a result, ddraw.lib, dsound.lib, and dxguid.lib must be added to  
+your development environment. 
+(ddraw.lib and ddraw.dll are shipped as part of the MSVC++ SDK.) Additionally, you need to 
+add <EM>&lt;program files&gt;/Microsoft DirectX SDK (February 2010)\Lib\x86</EM> to your library path and 
+<EM>&lt;program files&gt;/Microsoft DirectX SDK (February 2010)\Include</EM> to your include path. 
+Lastly, make sure WIN32 is added to your C/C++ preprocessor definitions. 
+<P>
+You can link with the UI SDK API statically or dynamically. 
+</P>
+<P>
+1) Statically Linking - You must add sdvr_sdk.lib and sdvr_ui_sdk.lib to your 
+library dependecies. 
+</P>
+<P>
+2) Dynamically Linking - To do so, you must add sdvr_ui_sdk_dll.lib 
+and sdvr_sdk_dll.lib to your library dependecies. Additionally, you must 
+include sdvr_ui_sdk_dll.dll and sdvr_sdk_dll.dll in the same directory as 
+your DVR Application. 
+</P>
+
+<a name="Top__Linking___with___UI___SDK___API___on___the___Linux___Platform"></a>
+<H2>4 &nbsp; Linking with UI SDK API on the Linux Platform</H2>
+This library requires an X Server that supports Xv extensions 
+to display live video. As a result, in addition to sdvr_sdk.lib and sdvr_ui_sdk.lib, 
+you must include the following libraries to your  development environment: 
+<P>
+1) CentOS 5 - libXv-devel 
+2) Ubuntau 7.10 - libxv-dev 
+</P>
+
+<a name="Top__Using___the___UI___SDK___API___to___preview___raw___video___frames"></a>
+<H2>5 &nbsp; Using the UI SDK API to preview raw video frames</H2>
+This section provides the steps required to display raw video frames on 
+the display screen. 
+<UL>
+<LI>
+You must provide the SDK the largest video frame size that would ever be 
+displayed. This size is passed as a parameter to <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init">sdvr_ui_init</A>()</NOBR>. This function 
+must be called before any of the display functions can be called and should only 
+be called once within your application. 
+</LI>
+<LI>
+The UI-SDK has three different modes to display raw video frames on the host display. 
+</LI>
+<UL>
+<LI>
++ <A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_1">SDVR_UI_PREVIEW_MODE_1</A> - This mode draws video frames directly in the  
+windows's DC. 
+</LI>
+<LI>
++ <A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_2">SDVR_UI_PREVIEW_MODE_2</A> and <A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_3">SDVR_UI_PREVIEW_MODE_3</A> - These two modes are only supported in MS Windows OS. 
+In these modes the video frames are displayed using overlays instead of direct draw in the  
+windows's device context (DC). This allows the host application to draw text 
+or bitmaps on the window without them  being overwritten by the video frames as 
+they get displayed on the same window. 
+</LI>
+</UL>
+<LI>
+Prior using the UI-SDK, you must specify the preview mode. Calling <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init">sdvr_ui_init</A>()</NOBR>, 
+uses <A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_1">SDVR_UI_PREVIEW_MODE_1</A>. You can call <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init_ex">sdvr_ui_init_ex</A>()</NOBR> to choose different 
+modes. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_1">SDVR_UI_PREVIEW_MODE_1</A>:  There are two different methods that you can choose in order to display raw 
+video frames in this mode. In this mode, the color key defines one specific color that should not 
+be drawn to the  render surface.  After initializing the UI SDK, you can specify the color key by calling 
+<NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_key_color">sdvr_ui_set_key_color</A>()</NOBR>.  This is an optional step in this mode. The SDK uses white 
+as the default color key. 
+</LI>
+<UL>
+<LI>
+Method 1: This method is used if you don't need to access the YUV buffers to perform any video 
+analytics, save into a file, or any other operations on raw video frames. To 
+start raw video display on a specific region within a window, call 
+<NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_video_preview">sdvr_ui_start_video_preview</A>()</NOBR>. To stop raw video display, call 
+<NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_stop_video_preview">sdvr_ui_stop_video_preview</A>()</NOBR>. In cases where you are interested in displaying 
+the raw video frames from one channel in different regions within a preview window, 
+you should call <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_video_preview">sdvr_ui_start_video_preview</A>()</NOBR> multiple times for each region. 
+After <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_video_preview">sdvr_ui_start_video_preview</A>()</NOBR> is called for a specific 
+encoder or decoder channel, the SDK starts displaying any raw video frame received 
+from the DVR board into all the regions within the given window handle. You direct 
+the SDK to stop displaying raw video for each region by calling <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_stop_video_preview">sdvr_ui_stop_video_preview</A>()</NOBR>. 
+It is also possible to get notification with every video frame by setting a 
+preview callback. With the preview callback you can put additional graphics 
+over the video, such as highlighting some regions, and so on. To set the preview 
+callback call <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_preview_callback">sdvr_ui_set_preview_callback</A>()</NOBR>. 
+</LI>
+<LI>
+Method 2: This method is used if you need to have more control over displaying the video frames. 
+To display YUV frames, get the YUV buffers by calling <NOBR><A HREF="sdvr_sdk.html#Routines__sdvr_get_av_buffer">sdvr_get_av_buffer</A>()</NOBR>. 
+In general, you can either poll this function or wait to be called back in your 
+video frame callback. After you acquire the YUV buffer, set the 
+buffer by calling <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_buffer">sdvr_ui_set_buffer</A>()</NOBR> for displaying and then release it using 
+<NOBR><A HREF="sdvr_sdk.html#Routines__sdvr_release_av_buffer">sdvr_release_av_buffer</A>()</NOBR>. After a YUV buffer is 
+set to be displayed, you can call <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_draw_yuv">sdvr_ui_draw_yuv</A>()</NOBR> to draw the buffer 
+into a specific region within a display window. There is no need to call 
+<NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_buffer">sdvr_ui_set_buffer</A>()</NOBR> multiple times to display the same 
+video frame in different regions of the screen. 
+</LI>
+<LI>
+Under Linux, It is also possible to get notification  with every video frame by setting a 
+preview callback. With the preview callback you can put additional graphics 
+over the video, such as highlighting some regions, and so on. To set the preview 
+callback call <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_preview_callback">sdvr_ui_set_preview_callback</A>()</NOBR>. <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_preview_callback">sdvr_ui_set_preview_callback</A>()</NOBR> is only supported in Linux. 
+In windows, user application can draw directly in the video window, the overlay video will only show up in 
+the key color area. 
+</LI>
+</UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_2">SDVR_UI_PREVIEW_MODE_2</A> - This mode in only supported in the MS Windows operating 
+system. It only provides video frame displays equivalent to method 2 of mode 1. 
+The color key defines one specific color that is used as key color for overlay display 
+The video window needs to use key color as background color. 
+You can specify the color key by calling 
+<NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_key_color">sdvr_ui_set_key_color</A>()</NOBR>.  This key color must be exactly the same as the background 
+color used for the window where the video is going to be place. No video will be displayed 
+if the key color and window's background color don't match. The SDK uses white 
+as the default color key. 
+</LI>
+<UL>
+<LI>
+To start raw video display on a specific region within a window, call 
+<NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_video_preview">sdvr_ui_start_video_preview</A>()</NOBR>. To stop raw video display, call 
+<NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_stop_video_preview">sdvr_ui_stop_video_preview</A>()</NOBR>. In cases where you are interested in displaying 
+the raw video frames from one channel in different regions within a preview window, 
+you should call <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_video_preview">sdvr_ui_start_video_preview</A>()</NOBR> multiple times for each region. 
+Once <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_video_preview">sdvr_ui_start_video_preview</A>()</NOBR> is called for a specific 
+encoder or decoder channel, the SDK starts displaying any raw video frame received 
+from the DVR board into all the regions within the given window handle. You direct 
+the SDK to stop displaying raw video for each region by calling <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_stop_video_preview">sdvr_ui_stop_video_preview</A>()</NOBR>. 
+</LI>
+</UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_3">SDVR_UI_PREVIEW_MODE_3</A> - This mode is similar to <A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_2">SDVR_UI_PREVIEW_MODE_2</A> but is recommended to be 
+used in Windows 7 environment specially if Aero desktop theme is selected. See 
+<NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_preview_callback">sdvr_ui_set_preview_callback</A>()</NOBR> for an explanation of how preview callbacks are different in this 
+mode verses the other modes. 
+</LI>
+</UL>
+
+<a name="Top__Using___the___UI___SDK___API___to___play___raw___video___frames"></a>
+<H2>6 &nbsp; Using the UI SDK API to play raw video frames</H2>
+This section provides the steps required to play raw audio frames on 
+the Host PC. 
+<UL>
+<LI>
+After calling <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init">sdvr_ui_init</A>()</NOBR>, if you intend to use any of the audio preview 
+APIs, you must call <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init_audio">sdvr_ui_init_audio</A>()</NOBR> to specify the sample audio rate, this 
+is <A HREF="sdvr_sdk.html#Types__SDVR_AUDIO_RATE_8KHZ">SDVR_AUDIO_RATE_8KHZ</A> for most of the DVR boards, and whether the audio 
+samples are mono (channel equal to one (1)) or stereo (channel equal to two (2)). 
+Additionally, you need to specify the window handle to your DVR Application. 
+</LI>
+<LI>
+After audio is initialized, you can set the audio volume at any time by 
+calling <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_adjust_volume">sdvr_ui_adjust_volume</A>()</NOBR>. 
+</LI>
+<LI>
+To start raw audio preview for a camera or decoded channel, call 
+<NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_audio_preview">sdvr_ui_start_audio_preview</A>()</NOBR>. To stop raw audio display, call 
+<NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_stop_video_preview">sdvr_ui_stop_video_preview</A>()</NOBR>.  
+Once <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_audio_preview">sdvr_ui_start_audio_preview</A>()</NOBR> is called for a specific 
+encoder or decoder channel, the SDK starts playing of raw audio frames  
+as it receives them. 
+</LI>
+</UL>
+
+<a name="Top__Important___Restrictions"></a>
+<H2>7 &nbsp; Important Restrictions</H2>
+Note the following restrictions when using the UI SDK. These 
+restrictions, apart from those explicitly noted, are not permanent 
+and will be removed in future versions of the SDK. 
+<UL>
+<LI>
+There are only four display regions per channel 
+when using <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_video_preview">sdvr_ui_start_video_preview</A>()</NOBR> to display raw video frames. 
+</LI>
+<LI>
+Dynamic linking of the display and board SDK libraries is only 
+available in the MS Windows environment. 
+</LI>
+<LI>
+In Windows, DirectDraw acceleration is required to be enabled on your video card. 
+</LI>
+<LI>
+Audio preview is only support in the MS Windows environment. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_2">SDVR_UI_PREVIEW_MODE_2</A> is not supported in conjunction  
+with aero theme in Microsoft Windows 7. 
+</LI>
+</UL>
+
+<!-- SEC_DESCRIPTION_CLOSE -->
+
+<!-- SEC_TYPES_START -->
+
+<a name="Top__Types"></a>
+<H2>8 &nbsp; Types</H2>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__sdvr_err_ui_e"></a>
+<PRE class="cdef">
+typedef enum _sdvr_err_ui_e {
+    <A name="Types__SDVR_ERR_UI_INIT">SDVR_ERR_UI_INIT</A> = 3000,
+    <A name="Types__SDVR_ERR_UI_INVALID_PARAM">SDVR_ERR_UI_INVALID_PARAM</A>,
+    <A name="Types__SDVR_ERR_UI_SET_BUFFER">SDVR_ERR_UI_SET_BUFFER</A>,
+    <A name="Types__SDVR_ERR_UI_DRAW_YUV">SDVR_ERR_UI_DRAW_YUV</A>,
+    <A name="Types__SDVR_ERR_UI_INVALID_YUV_BUF">SDVR_ERR_UI_INVALID_YUV_BUF</A>,
+    <A name="Types__SDVR_ERR_UI_VIDEO_SIZE">SDVR_ERR_UI_VIDEO_SIZE</A>,
+    <A name="Types__SDVR_ERR_UI_NO_BUFFER">SDVR_ERR_UI_NO_BUFFER</A>,
+    <A name="Types__SDVR_ERR_UI_MAX_PREVIEW_REGIONS">SDVR_ERR_UI_MAX_PREVIEW_REGIONS</A>,
+    <A name="Types__SDVR_ERR_UI_DRAWINFO_FULL">SDVR_ERR_UI_DRAWINFO_FULL</A>,
+    <A name="Types__SDVR_ERR_UI_CHANNEL_NOT_START">SDVR_ERR_UI_CHANNEL_NOT_START</A>,
+    <A name="Types__SDVR_ERR_UI_NO_INIT">SDVR_ERR_UI_NO_INIT</A>,
+    <A name="Types__SDVR_ERR_UI_MEMORY">SDVR_ERR_UI_MEMORY</A>,
+    <A name="Types__SDVR_ERR_UI_AUDIO_PREVIEW">SDVR_ERR_UI_AUDIO_PREVIEW</A>,
+    <A name="Types__SDVR_ERR_UI_UNSUPPORTED">SDVR_ERR_UI_UNSUPPORTED</A>
+} <A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A>; 
+</PRE>
+<DIV CLASS="descr">
+<P>
+Typedef for the errors returned by the UI SDK. 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_INIT">SDVR_ERR_UI_INIT</A> - Error code for failure to initialize the video or 
+audio preview. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_INVALID_PARAM">SDVR_ERR_UI_INVALID_PARAM</A> - Error code if the any of the parameters 
+passed to any of the SDVR UI functions is invalid. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_SET_BUFFER">SDVR_ERR_UI_SET_BUFFER</A> - Error code for failure to lock the draw surface. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_DRAW_YUV">SDVR_ERR_UI_DRAW_YUV</A> - Error code for failure to draw the surface. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_INVALID_YUV_BUF">SDVR_ERR_UI_INVALID_YUV_BUF</A> - Error code if the given YUV buffer is 
+not valid. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_VIDEO_SIZE">SDVR_ERR_UI_VIDEO_SIZE</A> - Error code if the YUV buffer size is larger 
+than the maximum supported video frame size. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_NO_BUFFER">SDVR_ERR_UI_NO_BUFFER</A> - Error code if no buffer was set. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_MAX_PREVIEW_REGIONS">SDVR_ERR_UI_MAX_PREVIEW_REGIONS</A> - Error code if no more preview regions 
+can be added. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_DRAWINFO_FULL">SDVR_ERR_UI_DRAWINFO_FULL</A> - Error code if the maximum number of preview 
+channels is reached. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_CHANNEL_NOT_START">SDVR_ERR_UI_CHANNEL_NOT_START</A> - Error code if the preview was not started 
+for the specified channel handle. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_NO_INIT">SDVR_ERR_UI_NO_INIT</A> - Error code if <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init">sdvr_ui_init</A>()</NOBR> was not called prior 
+calling a video preview API or <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init_audio">sdvr_ui_init_audio</A>()</NOBR> was not called prior to 
+an audio preview API. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_MEMORY">SDVR_ERR_UI_MEMORY</A> - Error code if failed to allocate enough memory for 
+the internal data structures. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_AUDIO_PREVIEW">SDVR_ERR_UI_AUDIO_PREVIEW</A> - Error code on failure to playback the audio. 
+</LI>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_UNSUPPORTED">SDVR_ERR_UI_UNSUPPORTED</A> - Error code if the API is not currently supported. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__sdvr_ui_video_preview_mode"></a>
+<PRE class="cdef">
+typedef enum _sdvr_ui_video_preview_mode {
+    <A name="Types__SDVR_UI_PREVIEW_MODE_1">SDVR_UI_PREVIEW_MODE_1</A> = 1,
+    <A name="Types__SDVR_UI_PREVIEW_MODE_2">SDVR_UI_PREVIEW_MODE_2</A>,
+    <A name="Types__SDVR_UI_PREVIEW_MODE_3">SDVR_UI_PREVIEW_MODE_3</A>,
+    <A name="Types__SDVR_UI_PREVIEW_MODE_MAX">SDVR_UI_PREVIEW_MODE_MAX</A>
+} <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_video_preview_mode">sdvr_ui_video_preview_mode</A>; 
+</PRE>
+<DIV CLASS="descr">
+<P>
+There are two different modes from which you 
+can choose to display video frame on the host monitor. 
+</P>
+<P>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_1">SDVR_UI_PREVIEW_MODE_1</A> - This mode draws video frames directly in the  
+windows's DC. 
+</P>
+<P>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_2">SDVR_UI_PREVIEW_MODE_2</A> - This mode is only supported in MS Windows OS. 
+It displays the video using overlays instead of direct draw in the  
+windows's device context (DC). This allows the host application to draw text 
+or icons on the window without being overwritten by the video frames as 
+they get displayed on the same window. 
+</P>
+<P>
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_3">SDVR_UI_PREVIEW_MODE_3</A> - This mode is similar to <A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_2">SDVR_UI_PREVIEW_MODE_2</A> but  
+is recommended to be used in Windows 7 environment specially if Aero  
+desktop theme is selected. 
+</P>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__sdvr_ui_init_def_t"></a>
+<PRE class="cdef">
+typedef struct _sdvr_ui_init_def_t {
+    <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_video_preview_mode">sdvr_ui_video_preview_mode</A> mode;
+    <A HREF="sdvr_sdk.html#Types__sx_uint32">sx_uint32</A> max_width;
+    <A HREF="sdvr_sdk.html#Types__sx_uint32">sx_uint32</A> max_lines;
+    <A HREF="sdvr_sdk.html#Types__sx_uint32">sx_uint32</A> reserve[20];
+} <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_init_def_t">sdvr_ui_init_def_t</A>;
+</PRE>
+<DIV CLASS="descr">
+<P>
+This data structure is used to initialize the UI-SDK. 
+</P>
+<UL>
+<LI>
+<STRONG>mode</STRONG> - The video display method. see <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_video_preview_mode">sdvr_ui_video_preview_mode</A> for detailed 
+description. 
+</LI>
+<LI>
+<STRONG>max_width</STRONG> - The maximum width video frame that will ever be displayed. 
+This field is ignore in <A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_2">SDVR_UI_PREVIEW_MODE_2</A>. 
+</LI>
+<LI>
+<STRONG>max_lines</STRONG> - The maximum number of lines in a video frame that will ever 
+be displayed.  This field is ignore in <A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_2">SDVR_UI_PREVIEW_MODE_2</A>. 
+</LI>
+</UL>
+<P>
+Remarks: 
+</P>
+<UL>
+<LI>
+You must initialize this data structure to zero prior using it. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__sdvr_ui_region_t"></a>
+<PRE class="cdef">
+typedef struct _sdvr_ui_region_t {
+    <A HREF="sdvr_sdk.html#Types__sx_uint32">sx_uint32</A> top_left_x;
+    <A HREF="sdvr_sdk.html#Types__sx_uint32">sx_uint32</A> top_left_y;
+    <A HREF="sdvr_sdk.html#Types__sx_uint32">sx_uint32</A> width;
+    <A HREF="sdvr_sdk.html#Types__sx_uint32">sx_uint32</A> height;
+} <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_region_t">sdvr_ui_region_t</A>;
+</PRE>
+<DIV CLASS="descr">
+<P>
+This data structure is used to define a display region. 
+A display region is the area within a window in which the video frame 
+is displayed. The top left corner of a window is specified by (0,0). 
+Each window can include many of such regions. 
+</P>
+<UL>
+<LI>
+<STRONG>top_left_x</STRONG> - X-coordinate of the upper left corner. 
+</LI>
+<LI>
+<STRONG>top_left_y</STRONG> - Y-coordinate of the upper left corner. 
+</LI>
+<LI>
+<STRONG>width</STRONG> - The width of the display region within the given window. 
+</LI>
+<LI>
+<STRONG>height</STRONG> - The height of the display region  within the given window. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__sdvr_ui_hwnd_t"></a>
+<PRE class="cdef">
+typedef Drawable <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_hwnd_t">sdvr_ui_hwnd_t</A>; 
+</PRE>
+<DIV CLASS="descr">
+<P>
+The window handle for where to display the raw video frames. In 
+the MS Windows environment  this is HWND. 
+</P>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__sdvr_ui_color_key_t"></a>
+<PRE class="cdef">
+typedef unsigned long <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_color_key_t">sdvr_ui_color_key_t</A>; 
+</PRE>
+<DIV CLASS="descr">
+<P>
+The color key defines one specific color, for example white, 
+which should not be drawn to the render surface. The color key usually 
+is defined by the RGB macro. 
+</P>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__sdvr_ui_preview_cb"></a>
+<PRE class="cdef">
+typedef void (*<A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_preview_cb">sdvr_ui_preview_cb</A>)(Display *dpy,
+                                   Drawable d);
+</PRE>
+<DIV CLASS="descr">
+<P>
+Preview callback function type. 
+</P>
+</DIV>
+
+</DIV>
+
+<!-- SEC_TYPES_CLOSE -->
+
+<!-- SEC_DEFINES_START -->
+
+<a name="Top__Defines"></a>
+<H2>9 &nbsp; Defines</H2>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Defines__SDVR_UI_ERR_NONE"></a>
+<PRE class="cdef">
+#define <A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A>
+</PRE>
+<DIV CLASS="descr">
+<P>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - Error coder if no error. 
+</P>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Defines__SDVR_MAX_DRAW_REGIONS"></a>
+<PRE class="cdef">
+#define <A HREF="sdvr_ui_sdk.html#Defines__SDVR_MAX_DRAW_REGIONS">SDVR_MAX_DRAW_REGIONS</A> 4 
+</PRE>
+<DIV CLASS="descr">
+<P>
+It is possible to display raw video frames for each encoder 
+or decoder channel in multiple regions within a given window handle. 
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_MAX_DRAW_REGIONS">SDVR_MAX_DRAW_REGIONS</A> defines the maximum number of display regions 
+that can be added to the display preview regions. 
+</P>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Defines__SDVR_UI_LS_SOLID"></a>
+<a name="Defines__SDVR_UI_LS_DASH"></a>
+<a name="Defines__SDVR_UI_LS_DOT"></a>
+<PRE class="cdef">
+#define <A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_LS_SOLID">SDVR_UI_LS_SOLID</A> 0 
+#define <A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_LS_DASH">SDVR_UI_LS_DASH</A> 1 
+#define <A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_LS_DOT">SDVR_UI_LS_DOT</A> 2 
+</PRE>
+<DIV CLASS="descr">
+<P>
+The line style to use to draw a frame around a 
+region. 
+</P>
+<P>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_LS_SOLID">SDVR_UI_LS_SOLID</A> - Use solid lines.  ____ 
+</P>
+<P>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_LS_DASH">SDVR_UI_LS_DASH</A> - Use dashed lines.  ----- 
+</P>
+<P>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_LS_DOT">SDVR_UI_LS_DOT</A> - Use dotted lines.   ..... 
+</P>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Defines__SDVR_UI_DIRECTDRAW_NOLOCK"></a>
+<PRE class="cdef">
+#define <A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_DIRECTDRAW_NOLOCK">SDVR_UI_DIRECTDRAW_NOLOCK</A>
+</PRE>
+<DIV CLASS="descr">
+<P>
+The function value to be used with <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_internal_setup">sdvr_ui_internal_setup</A>()</NOBR> 
+</P>
+<P>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_DIRECTDRAW_NOLOCK">SDVR_UI_DIRECTDRAW_NOLOCK</A> - Internal switch to turn off directdraw 
+surface lock. This can improve the display performance but it is only 
+compatible with certain graphic cards (Intel integrated video cards 
+are the only ones tested). It is not recommended to turn this feature 
+on in normal use. 
+</P>
+</DIV>
+
+</DIV>
+
+<!-- SEC_DEFINES_CLOSE -->
+
+<!-- SEC_ROUTINES_START -->
+
+<a name="Top__Routines"></a>
+<H2>10 &nbsp; Routines</H2>
+
+<a name="Routines__The___Video___Preview___APIs"></a>
+<H3>10.1 &nbsp; The Video Preview APIs</H3>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_init"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init">sdvr_ui_init</A> (<A HREF="sdvr_sdk.html#Types__sx_uint32">sx_uint32</A> max_width, <A HREF="sdvr_sdk.html#Types__sx_uint32">sx_uint32</A> max_lines);
+</PRE>
+<DIV CLASS="descr">
+<P>
+This function initializes the video surface and sets up the maximum supported 
+video frame size. (for example, <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init">sdvr_ui_init</A>(720, 480) sets the largest video frame 
+size in the system as NTSC D1.) 
+</P>
+<P>
+This function must be called before any of the display functions 
+and should be called only once per session. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>max_width</STRONG> - The maximum width video frame that will ever be displayed. 
+</LI>
+<LI>
+<STRONG>max_lines</STRONG> - The maximum number of lines in a video frame that will ever 
+be displayed. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. Otherwise, see the error code list. 
+</LI>
+</UL>
+<P>
+Remarks: 
+</P>
+<UL>
+<LI>
+This function uses <A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_1">SDVR_UI_PREVIEW_MODE_1</A>. To choose a different video 
+preview mode call <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init_ex">sdvr_ui_init_ex</A>()</NOBR> 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_init_ex"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init_ex">sdvr_ui_init_ex</A> (<A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_init_def_t">sdvr_ui_init_def_t</A> *ui_init_def);
+</PRE>
+<DIV CLASS="descr">
+<P>
+This function initializes the video surface and sets up the maximum supported 
+video frame size. (for example, <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init">sdvr_ui_init</A>(720, 480) sets the largest video frame 
+size in the system as NTSC D1.) Call this function if you are interested 
+to select a different video preview mode other than the default 
+<A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_1">SDVR_UI_PREVIEW_MODE_1</A>. 
+</P>
+<P>
+This function must be called before any of the display functions 
+and should be called only once per session. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>ui_init_def</STRONG> - A pointer to the data structure to initialize the 
+UI-SDK. See <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_init_def_t">sdvr_ui_init_def_t</A> for more information. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. Otherwise, see the error code list. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_init_audio"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init_audio">sdvr_ui_init_audio</A> (<A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_hwnd_t">sdvr_ui_hwnd_t</A>      wnd_handle,
+                                  <A HREF="sdvr_sdk.html#Types__sdvr_audio_rate_e">sdvr_audio_rate_e</A>   sample_rate,
+                                  <A HREF="sdvr_sdk.html#Types__sx_int32">sx_int32</A>            channels);
+</PRE>
+<DIV CLASS="descr">
+<P>
+This function initializes the data structure for audio preview.  
+It needs to be called only if you intend to call any of the audio preivew APIs. 
+The audio preview data structure gets destroyed once <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_close">sdvr_ui_close</A>()</NOBR> is 
+called. 
+</P>
+<P>
+This function should be called only once per session. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>wnd_handle</STRONG> - The window handle for audio playback. 
+</LI>
+<LI>
+<STRONG>sample_rate</STRONG> - Audio sample rate. Note that some of the 
+audio sample rates may not be supported by some the DVR boards. 
+</LI>
+<LI>
+<STRONG>channels</STRONG> - Number of audio channels. This parameter 
+should be set to one (1) as the DVR firmware only send mono 
+audio. In the event, your DVR board supports streo audio 
+set this parameter to two (2). 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. Otherwise, see the error code list. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_close"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_close">sdvr_ui_close</A> ();
+</PRE>
+<DIV CLASS="descr">
+<P>
+This function closes the UI SDK and frees up the system 
+resources used by it. You must call this function prior to exiting 
+your DVR Application for a clean shutdown of your system. 
+No other UI API function calls, except <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init">sdvr_ui_init</A>()</NOBR>, are allowed after 
+this function is called. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+None. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_set_key_color"></a>
+<PRE class="cdef">
+void <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_key_color">sdvr_ui_set_key_color</A> (<A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_color_key_t">sdvr_ui_color_key_t</A> color_key);
+</PRE>
+<DIV CLASS="descr">
+<P>
+The color key defines one specific color that should not be drawn to the 
+render surface. The color key is used to set the background window color 
+when clearing a region. The default color key is white. 
+</P>
+<P>
+<STRONG>NOTE: Color key is not supported by all video cards.</STRONG> 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>color_key</STRONG> - The new color key. It is usually defined by the sdvr_rgb macro. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+None. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_set_buffer"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_buffer">sdvr_ui_set_buffer</A> (<A HREF="sdvr_sdk.html#Types__sdvr_av_buffer_t">sdvr_av_buffer_t</A> *raw_vbuffer);
+</PRE>
+<DIV CLASS="descr">
+<P>
+This function sets the raw video frame to be displayed. 
+Before a video frame can be displayed, you must specify a raw video frame in 
+the format of 4-2-0. The same buffer is used every time <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_draw_yuv">sdvr_ui_draw_yuv</A>()</NOBR> is 
+called. This means that the same video frame can be displayed in multiple window regions. 
+To display the next video frame, you must call this function again with a new 
+yuv_buffer. In general you get raw video buffers by calling <NOBR><A HREF="sdvr_sdk.html#Routines__sdvr_get_av_buffer">sdvr_get_av_buffer</A>()</NOBR> 
+in the video frame callback, as you are notified when buffers arrive 
+for either primary or secondary raw video frames. When calling <NOBR><A HREF="sdvr_sdk.html#Routines__sdvr_get_av_buffer">sdvr_get_av_buffer</A>()</NOBR>, 
+You should use <A HREF="sdvr_sdk.html#Types__SDVR_FRAME_RAW_VIDEO">SDVR_FRAME_RAW_VIDEO</A> 
+for primary raw video frame type and <A HREF="sdvr_sdk.html#Types__SDVR_FRAME_RAW_VIDEO_SECONDARY">SDVR_FRAME_RAW_VIDEO_SECONDARY</A> for secondary. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>raw_vbuffer</STRONG> - A pointer to an A/V buffer structure with the raw video frame type. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. Otherwise, see the error code list. 
+</LI>
+</UL>
+<P>
+Remarks: 
+</P>
+<UL>
+<LI>
+This function is only available in method 1 of video preview. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_draw_yuv"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_draw_yuv">sdvr_ui_draw_yuv</A> (<A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_hwnd_t">sdvr_ui_hwnd_t</A>     hwnd,
+                                <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_region_t">sdvr_ui_region_t</A> * region);
+</PRE>
+<DIV CLASS="descr">
+<P>
+This function displays a YUV video frame that was previously set 
+by <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_buffer">sdvr_ui_set_buffer</A>()</NOBR> in the given region within the given 
+window handle. 
+</P>
+<P>
+The specified region must be within the maximum video frame width and 
+lines that were set by the call to <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init">sdvr_ui_init</A>()</NOBR>. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>hwnd</STRONG> - The window handle to display the video frame. 
+</LI>
+<LI>
+<STRONG>region</STRONG> - The rectangle within the given window handle in which to 
+display the video frame. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. Otherwise, see the error code list. 
+</LI>
+</UL>
+<P>
+Remarks: 
+</P>
+<UL>
+<LI>
+This function is only available in method 1 of video preview. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_draw_frame"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_draw_frame">sdvr_ui_draw_frame</A> (<A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_hwnd_t">sdvr_ui_hwnd_t</A>        hwnd,
+                                  <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_region_t">sdvr_ui_region_t</A>      region,
+                                  <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_color_key_t">sdvr_ui_color_key_t</A>   rgb_color,
+                                  int                   line_style);
+</PRE>
+<DIV CLASS="descr">
+<P>
+Use this function to draw a frame around the given region within the 
+given window. 
+</P>
+<P>
+You can specify the frame color or the line style. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>hwnd</STRONG> - The current window handle. 
+</LI>
+<LI>
+<STRONG>region</STRONG> - The rectangle within the given window handle around which to 
+draw a frame. 
+</LI>
+<LI>
+<STRONG>rgb_color</STRONG> - The line frame color. 
+</LI>
+<LI>
+<STRONG>line_style</STRONG> - The line frame style. (for example, <A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_LS_SOLID">SDVR_UI_LS_SOLID</A>) 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. Otherwise, see the error code list. 
+</LI>
+</UL>
+<P>
+Remarks: 
+</P>
+<UL>
+<LI>
+This function is only available in method 1 and 3 of video preview. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_refresh"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_refresh">sdvr_ui_refresh</A> ();
+</PRE>
+<DIV CLASS="descr">
+<P>
+Occasionally, the window region displaying the video frames may need 
+to be repainted as the result of another window or application covering it. 
+In this case, you will receive a paint message to repaint the region. 
+</P>
+<P>
+Call this function to refresh the content of all the regions that were 
+being previewed. 
+</P>
+<P>
+<STRONG>Note:</STRONG> This function can only be used in conjunction with 
+<NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_video_preview_ex">sdvr_ui_start_video_preview_ex</A>()</NOBR> and <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_stop_video_preview">sdvr_ui_stop_video_preview</A>()</NOBR>. If you 
+are using the low level UI API, calling this function will have no affect 
+on the display. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+None. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+None. 
+</LI>
+</UL>
+<P>
+Remark: 
+</P>
+<UL>
+<LI>
+It is recommended, although not required, that you call <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_clear_yuv">sdvr_ui_clear_yuv</A>()</NOBR> for the 
+desired region before calling this function. 
+</LI>
+</UL>
+<P>
+Remarks: 
+</P>
+<UL>
+<LI>
+This function is only available in method 1 of video preview. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_clear_yuv"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_clear_yuv">sdvr_ui_clear_yuv</A> (<A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_hwnd_t">sdvr_ui_hwnd_t</A>     hwnd,
+                                 <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_region_t">sdvr_ui_region_t</A> * region);
+</PRE>
+<DIV CLASS="descr">
+<P>
+This function clears the specified rectangle by filling it with black. 
+</P>
+<P>
+The specified region must be within the maximum video frame width and 
+lines that were set by the call to <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init">sdvr_ui_init</A>()</NOBR>. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>hwnd</STRONG> - The window handle to clear the video frame. 
+</LI>
+<LI>
+<STRONG>region</STRONG> - The rectangle within the given window handle to 
+clear. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. Otherwise, see the error code list. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_version"></a>
+<PRE class="cdef">
+void <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_version">sdvr_ui_version</A> (<A HREF="sdvr_sdk.html#Types__sx_uint8">sx_uint8</A> * major,
+                      <A HREF="sdvr_sdk.html#Types__sx_uint8">sx_uint8</A> * minor,
+                      <A HREF="sdvr_sdk.html#Types__sx_uint8">sx_uint8</A> * revision,
+                      <A HREF="sdvr_sdk.html#Types__sx_uint8">sx_uint8</A> * build);
+</PRE>
+<DIV CLASS="descr">
+<P>
+This function returns the display SDK version. 
+</P>
+<P>
+Stretch follows the convention of using four numbers for version 
+control. A change in the major number indicates major changes to 
+functionality, a change in the minor number indicates minor 
+changes to functionality, and a change in the revision number indicates 
+significant bug fixes that were introduced in the minor change functionality. 
+A change to the build number indicates only bug fixes that do not 
+change functionality. 
+</P>
+<P>
+This function can be called before or after <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init">sdvr_ui_init</A>()</NOBR>; 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<EM>major</EM> - Pointer to a variable that will hold the major version of the 
+display SDK when this function returns. 
+</LI>
+<LI>
+<EM>minor</EM> - Pointer to a variable that will hold the minor version of 
+the display SDK when this function returns. 
+</LI>
+<LI>
+<EM>revision</EM> - Pointer to a variable that will hold the revision version of the 
+display SDK when this function returns. 
+</LI>
+<LI>
+<EM>build</EM> - Pointer to a variable that will hold the build or bug fix 
+version of the display SDK when this function returns. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+Nothing. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_start_video_preview"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_video_preview">sdvr_ui_start_video_preview</A> (<A HREF="sdvr_sdk.html#Types__sdvr_chan_handle_t">sdvr_chan_handle_t</A>   handle,
+                                           <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_hwnd_t">sdvr_ui_hwnd_t</A>       wnd_handle,
+                                           <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_region_t">sdvr_ui_region_t</A>   * region,
+                                           int                * preview_id);
+</PRE>
+<DIV CLASS="descr">
+<P>
+You can request the SDK to display video frames directly into one or more 
+regions within a given window handle. Each consecutive call to this function 
+causes 
+the given display region within the given window handle to be added to the 
+preview lists. A unique preview ID that can be used to stop the preview on 
+it by calling <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_stop_video_preview">sdvr_ui_stop_video_preview</A>()</NOBR> is returned for each region. 
+</P>
+<P>
+This function does not enable video streaming. You must call <NOBR><A HREF="sdvr_sdk.html#Routines__sdvr_stream_raw_video">sdvr_stream_raw_video</A>()</NOBR> 
+to enable streaming of the raw video frames for the specific encoder or decoder 
+channel. Then, if this function is called, the corresponding video frame will be 
+displayed in the given regions. 
+</P>
+<P>
+<STRONG>NOTE</STRONG>: This function only works with primary raw video. To start video preview 
+for secondary raw video on this channel use sdvr_ui_start_video_preview_ex. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>handle</STRONG> - An encoder or decoder channel to display its raw video frames. 
+</LI>
+<LI>
+<STRONG>wnd_handle</STRONG> - The window handle to display the video frames. 
+</LI>
+<LI>
+<STRONG>region</STRONG> - The rectangle within the given window handle in which to 
+display the video frames. You can add up to <A HREF="sdvr_ui_sdk.html#Defines__SDVR_MAX_DRAW_REGIONS">SDVR_MAX_DRAW_REGIONS</A> 
+regions by calling this function multiple times. Each region 
+displays the same raw video frame for the given encoder or 
+decoder handle. 
+</LI>
+<LI>
+<STRONG>preview_id</STRONG> - A pointer to the variable holding the ID for the region 
+that is added successfully. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. Otherwise, see the error code list. 
+</LI>
+</UL>
+<P>
+Remark: 
+</P>
+<UL>
+<LI>
+You can still call <NOBR><A HREF="sdvr_sdk.html#Routines__sdvr_get_av_buffer">sdvr_get_av_buffer</A>()</NOBR> to retrieve raw video frames for 
+further processing if it is needed. 
+</LI>
+<LI>
+<STRONG>NOTE:</STRONG> For decoder channels, you must send each encoded frame to 
+the board to decode them to receive raw video frames. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_start_video_preview_ex"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_video_preview_ex">sdvr_ui_start_video_preview_ex</A> (<A HREF="sdvr_sdk.html#Types__sdvr_chan_handle_t">sdvr_chan_handle_t</A>   handle,
+                                              <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_hwnd_t">sdvr_ui_hwnd_t</A>       wnd_handle,
+                                              <A HREF="sdvr_sdk.html#Types__sx_uint8">sx_uint8</A>             raw_vstream_id,
+                                              <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_region_t">sdvr_ui_region_t</A>   * region,
+                                              int                * preview_id);
+</PRE>
+<DIV CLASS="descr">
+<P>
+You can request the SDK to display video frames directly into one or more 
+regions within a given window handle. Each consecutive call to this function 
+causes 
+the given display region within the given window handle to be added to the 
+preview lists. A unique preview ID that can be used to stop the preview on it 
+by calling <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_stop_video_preview">sdvr_ui_stop_video_preview</A>()</NOBR> is returned for each region. 
+</P>
+<P>
+This function does not enable video streaming. You must call <NOBR><A HREF="sdvr_sdk.html#Routines__sdvr_stream_raw_video">sdvr_stream_raw_video</A>()</NOBR> 
+or <NOBR><A HREF="sdvr_sdk.html#Routines__sdvr_stream_raw_video_secondary">sdvr_stream_raw_video_secondary</A>()</NOBR> 
+to enable streaming of the raw video frames for the specific encoder or decoder 
+channel. Then, if this function is called, the corresponding video frame will be 
+displayed in the given regions. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>handle</STRONG> - An encoder or decoder channel to display its raw video frames. 
+</LI>
+<LI>
+<STRONG>wnd_handle</STRONG> - The window handle to display the video frames. 
+</LI>
+<LI>
+<STRONG>raw_vstream_id</STRONG> - This parameter specifies which one of the two 
+raw video stream to display. Set this parameter to zero (0) 
+for the primary raw video stream and one (1) for the secondary. 
+</LI>
+<LI>
+<STRONG>region</STRONG> - The rectangle within the given window handle in which to 
+display the video frames. You can add up to <A HREF="sdvr_ui_sdk.html#Defines__SDVR_MAX_DRAW_REGIONS">SDVR_MAX_DRAW_REGIONS</A> 
+regions by calling this function multiple times. Each region 
+displays the same raw video frame for the given encoder or 
+decoder handle. 
+</LI>
+<LI>
+<STRONG>preview_id</STRONG> - A pointer to the variable holding the ID for the region 
+that is added successfully. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. Otherwise, see the error code list. 
+</LI>
+</UL>
+<P>
+Remark: 
+</P>
+<UL>
+<LI>
+You can still call <NOBR><A HREF="sdvr_sdk.html#Routines__sdvr_get_av_buffer">sdvr_get_av_buffer</A>()</NOBR> to retrieve raw video frames for 
+further processing if it is needed. 
+</LI>
+<LI>
+<STRONG>NOTE:</STRONG> : For decoder channels, you must send each encoded frame to 
+the DVR board to be decoded in order to receive raw video frames. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_stop_video_preview"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_stop_video_preview">sdvr_ui_stop_video_preview</A> (<A HREF="sdvr_sdk.html#Types__sdvr_chan_handle_t">sdvr_chan_handle_t</A>   handle,
+                                          int                  preview_id);
+</PRE>
+<DIV CLASS="descr">
+<P>
+This function stops previewing of the raw video frames of the given encoder 
+or decoder channel for the given region ID. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>handle</STRONG> - An encoder or decoder channel to display its raw video frames. 
+</LI>
+<LI>
+<STRONG>preview_id</STRONG> - The ID of the region to stop raw video frame previewing. 
+This ID was returned from the call to <NOBR><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_video_preview">sdvr_ui_start_video_preview</A>()</NOBR>. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. Otherwise, see the error code list. 
+</LI>
+</UL>
+<P>
+Remark: 
+</P>
+<UL>
+<LI>
+Calling this function does not disable the actual raw video streaming. 
+Call sdvr_stream_raw_video to disable raw video streaming. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_set_preview_callback"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_preview_callback">sdvr_ui_set_preview_callback</A> (<A HREF="sdvr_sdk.html#Types__sdvr_chan_handle_t">sdvr_chan_handle_t</A>   handle,
+                                            int                  preview_id,
+                                            <A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_preview_cb">sdvr_ui_preview_cb</A>   cb);
+</PRE>
+<DIV CLASS="descr">
+<P>
+Sets the preview callback function. The video preview must be started before 
+calling this function. The preview callback function is executed with every video 
+frame, making it possible to modify the content of the frame. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>handle</STRONG> - An encoder or decoder channel to display its raw video frames. 
+</LI>
+<LI>
+<STRONG>preview_id</STRONG> - The ID of the region for which the callback is set. 
+</LI>
+<LI>
+<STRONG>preview_cb</STRONG> - Pointer to the callback function or NULL to clear. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. Otherwise, see the error code list. 
+</LI>
+</UL>
+<P>
+Callback function on Windows: 
+</P>
+<UL>
+<LI>
+void (*preview_cb)(HDC hdc); 
+</LI>
+<LI>
+Executed before the frame is displayed. The device context handle can be used 
+for drawing on the frame. Do not release the device context. It is created 
+by the UI SDK and will be released automatically. 
+</LI>
+</UL>
+<P>
+Callback function on Linux: 
+</P>
+<UL>
+<LI>
+void (*preview_cb)(Display *dpy, Drawable win); 
+</LI>
+<LI>
+Executed after the video frame is rendered into the window. Display and 
+Drawable identify the X window and can be used for drawing over the frame. 
+</LI>
+</UL>
+<P>
+Remarks: 
+</P>
+<UL>
+<LI>
+The usage of preview callback function is differen in UI mode 3 than the 
+other UI modes. There is only one global callback function allowed using 
+UI Mode 3. Call <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_preview_callback">sdvr_ui_set_preview_callback</A> ( 0,0,cb) to set the callback function. 
+The preview callback is called everytime before the direct3d frame buffer 
+is displayed. The callback passes back a NULL hdc. User call only call 
+sdvr_ui_draw_frame in the callback to draw rectagles. No other drawing 
+function is currently supported. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_internal_setup"></a>
+<PRE class="cdef">
+void <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_internal_setup">sdvr_ui_internal_setup</A> (int func, int enable);
+</PRE>
+<DIV CLASS="descr">
+<P>
+Internal function, turn on special feature for customers. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>func</STRONG> - function code 
+</LI>
+<LI>
+<STRONG>enable</STRONG> - 0 turned the specified functions off, 1 turn the specified 
+function on. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+
+<a name="Routines__The___Audio___Preview___APIs"></a>
+<H3>10.2 &nbsp; The Audio Preview APIs</H3>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_start_audio_preview"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_audio_preview">sdvr_ui_start_audio_preview</A> (<A HREF="sdvr_sdk.html#Types__sdvr_chan_handle_t">sdvr_chan_handle_t</A>   handle,
+                                           <A HREF="sdvr_sdk.html#Types__sx_bool">sx_bool</A>              wait);
+</PRE>
+<DIV CLASS="descr">
+<P>
+This function enables playing of the live or decode audio frames associated 
+with the given channel handle on the PC's speakers. 
+</P>
+<P>
+This function does not enable raw audio streaming for the given channel.  
+</P>
+<P>
+Call <NOBR><A HREF="sdvr_sdk.html#Routines__sdvr_stream_raw_audio">sdvr_stream_raw_audio</A>()</NOBR> to actually enable streaming of the raw audio  
+frames for the given encoder or decoder channel.  
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>handle</STRONG> - An encoder or decoder channel to play its raw audio frames. 
+</LI>
+<LI>
+<STRONG>wait</STRONG> - Set it to <EM>true</EM> if you want to wait for the audio buffer to have enough space to put  
+the data in. Set it to <EM>false</EM> otherwise. Note that only partial audio 
+data will be played if this parameter is set to <EM>false</EM> and there is not 
+enough space in the audio playback buffer. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. Otherwise, see the error code list. 
+</LI>
+</UL>
+<P>
+Remark: 
+</P>
+<UL>
+<LI>
+You still can call <NOBR><A HREF="sdvr_sdk.html#Routines__sdvr_get_av_buffer">sdvr_get_av_buffer</A>()</NOBR> to retrieve raw audio frames for 
+further processing if it is needed. 
+</LI>
+<LI>
+<STRONG>NOTE:</STRONG> : For decoder channels, you must send each encoded frame to 
+the DVR board to be decoded in order to receive raw audio frames. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_stop_audio_preview"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_stop_audio_preview">sdvr_ui_stop_audio_preview</A> ();
+</PRE>
+<DIV CLASS="descr">
+<P>
+This function stops live/decoded audio playback for the channel that was 
+started. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+None. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. Otherwise, see the error code list. 
+</LI>
+</UL>
+<P>
+Remark: 
+</P>
+<UL>
+<LI>
+Calling this function does not disable the actual raw audio streaming. 
+Call <NOBR><A HREF="sdvr_sdk.html#Routines__sdvr_stream_raw_audio">sdvr_stream_raw_audio</A>()</NOBR> to disable raw audio streaming. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_ui_adjust_volume"></a>
+<PRE class="cdef">
+<A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A> <A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_adjust_volume">sdvr_ui_adjust_volume</A> (<A HREF="sdvr_sdk.html#Types__sx_uint16">sx_uint16</A> volume);
+</PRE>
+<DIV CLASS="descr">
+<P>
+This function adjusts the volume of audio preview. 
+</P>
+<P>
+Parameters: 
+</P>
+<UL>
+<LI>
+<STRONG>volume</STRONG> - audio volume. It should be in the of range 0 - 10000. 
+Any value of 10000 is taken as 10000. 
+</LI>
+</UL>
+<P>
+Returns: 
+</P>
+<UL>
+<LI>
+<A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A> - On success. Otherwise, see the error code list. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+
+<a name="Routines__Miscellaneous"></a>
+<H3>10.3 &nbsp; Miscellaneous</H3>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__sdvr_rgb"></a>
+<PRE class="cdef">
+#define <A HREF="sdvr_ui_sdk.html#Routines__sdvr_rgb">sdvr_rgb</A> (r,g,b) { ... }
+</PRE>
+<DIV CLASS="descr">
+<P>
+A macro to construct an RGB color scheme to RGB 24 bit. 
+</P>
+</DIV>
+
+</DIV>
+
+<!-- SEC_ROUTINES_CLOSE -->
+
+<!-- SEC_FULL_TOC_START -->
+
+<a name="Top__Table___of___Contents"></a>
+<H2>11 &nbsp; Table of Contents</H2>
+<P align="left">
+<A href="#Top__Include">1 &nbsp; Include</A>
+<BR>
+<A href="#Top__Introduction">2 &nbsp; Introduction</A>
+<BR>
+<A href="#Top__Linking___with___UI___SDK___API___on___the___MS___Window___Platform">3 &nbsp; Linking with UI SDK API on the MS Window Platform</A>
+<BR>
+<A href="#Top__Linking___with___UI___SDK___API___on___the___Linux___Platform">4 &nbsp; Linking with UI SDK API on the Linux Platform</A>
+<BR>
+<A href="#Top__Using___the___UI___SDK___API___to___preview___raw___video___frames">5 &nbsp; Using the UI SDK API to preview raw video frames</A>
+<BR>
+<A href="#Top__Using___the___UI___SDK___API___to___play___raw___video___frames">6 &nbsp; Using the UI SDK API to play raw video frames</A>
+<BR>
+<A href="#Top__Important___Restrictions">7 &nbsp; Important Restrictions</A>
+<BR>
+<A href="#Top__Types">8 &nbsp; Types</A>
+<BR>
+<A href="#Top__Defines">9 &nbsp; Defines</A>
+<BR>
+<A href="#Top__Routines">10 &nbsp; Routines</A>
+<BR>
+&nbsp; &nbsp; &nbsp; <A href="#Routines__The___Video___Preview___APIs">10.1 &nbsp; The Video Preview APIs</A>
+<BR>
+&nbsp; &nbsp; &nbsp; <A href="#Routines__The___Audio___Preview___APIs">10.2 &nbsp; The Audio Preview APIs</A>
+<BR>
+&nbsp; &nbsp; &nbsp; <A href="#Routines__Miscellaneous">10.3 &nbsp; Miscellaneous</A>
+<BR>
+<A href="#Top__Table___of___Contents">11 &nbsp; Table of Contents</A>
+<BR>
+<A href="#Top__Index">12 &nbsp; Index</A>
+</P>
+
+
+<!-- SEC_FULL_TOC_CLOSE -->
+
+<!-- GLOBAL_INDEX -->
+
+<!-- SEC_INDEX_START -->
+
+<a name="Top__Index"></a>
+<H2>12 &nbsp; Index</H2>
+<P>
+This index contains the following elements: 
+defines, routines, types, enum type elements (EnumElt),
+shell commands (ShCom), shell parameters (ShParam), and grammars.
+</P>
+<P>
+<TABLE class="index" COLS=7 BORDER=0 WIDTH="100%">
+<TR>
+<TD width="100*">Element</TD>
+<TD width="30*">Type</TD>
+<TD width="10*" align="right">Section</TD>
+<TD width=10></TD>
+<TD width="100*">Element</TD>
+<TD width="30*">Type</TD>
+<TD width="10*" align="right">Section</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_AUDIO_PREVIEW">SDVR_ERR_UI_AUDIO_PREVIEW</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_init"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init">sdvr_ui_init</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_CHANNEL_NOT_START">SDVR_ERR_UI_CHANNEL_NOT_START</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_init_audio"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init_audio">sdvr_ui_init_audio</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_DRAW_YUV">SDVR_ERR_UI_DRAW_YUV</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_init_def_t">sdvr_ui_init_def_t</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_DRAWINFO_FULL">SDVR_ERR_UI_DRAWINFO_FULL</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_init_ex"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_init_ex">sdvr_ui_init_ex</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__sdvr_err_ui_e">sdvr_err_ui_e</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_internal_setup"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_internal_setup">sdvr_ui_internal_setup</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_INIT">SDVR_ERR_UI_INIT</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_LS_DASH">SDVR_UI_LS_DASH</A>
+</NOBR></TD>
+<TD width="30*">Define</TD>
+<TD width="10*" align="right">
+<A href="#Top__Defines">9</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_INVALID_PARAM">SDVR_ERR_UI_INVALID_PARAM</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_LS_DOT">SDVR_UI_LS_DOT</A>
+</NOBR></TD>
+<TD width="30*">Define</TD>
+<TD width="10*" align="right">
+<A href="#Top__Defines">9</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_INVALID_YUV_BUF">SDVR_ERR_UI_INVALID_YUV_BUF</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_LS_SOLID">SDVR_UI_LS_SOLID</A>
+</NOBR></TD>
+<TD width="30*">Define</TD>
+<TD width="10*" align="right">
+<A href="#Top__Defines">9</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_MAX_PREVIEW_REGIONS">SDVR_ERR_UI_MAX_PREVIEW_REGIONS</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_preview_cb">sdvr_ui_preview_cb</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_MEMORY">SDVR_ERR_UI_MEMORY</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_1">SDVR_UI_PREVIEW_MODE_1</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_NO_BUFFER">SDVR_ERR_UI_NO_BUFFER</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_2">SDVR_UI_PREVIEW_MODE_2</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_NO_INIT">SDVR_ERR_UI_NO_INIT</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_3">SDVR_UI_PREVIEW_MODE_3</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_SET_BUFFER">SDVR_ERR_UI_SET_BUFFER</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_UI_PREVIEW_MODE_MAX">SDVR_UI_PREVIEW_MODE_MAX</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_UNSUPPORTED">SDVR_ERR_UI_UNSUPPORTED</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_refresh"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_refresh">sdvr_ui_refresh</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__SDVR_ERR_UI_VIDEO_SIZE">SDVR_ERR_UI_VIDEO_SIZE</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_region_t">sdvr_ui_region_t</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Defines__SDVR_MAX_DRAW_REGIONS">SDVR_MAX_DRAW_REGIONS</A>
+</NOBR></TD>
+<TD width="30*">Define</TD>
+<TD width="10*" align="right">
+<A href="#Top__Defines">9</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_set_buffer"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_buffer">sdvr_ui_set_buffer</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_rgb"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_rgb">sdvr_rgb</A>()</A>
+</NOBR></TD>
+<TD width="30*">Define</TD>
+<TD width="10*" align="right">
+<A href="#Routines__Miscellaneous">10.3</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_set_key_color"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_key_color">sdvr_ui_set_key_color</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_adjust_volume"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_adjust_volume">sdvr_ui_adjust_volume</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Audio___Preview___APIs">10.2</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_set_preview_callback"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_set_preview_callback">sdvr_ui_set_preview_callback</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_clear_yuv"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_clear_yuv">sdvr_ui_clear_yuv</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_start_audio_preview"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_audio_preview">sdvr_ui_start_audio_preview</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Audio___Preview___APIs">10.2</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_close"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_close">sdvr_ui_close</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_start_video_preview"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_video_preview">sdvr_ui_start_video_preview</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_color_key_t">sdvr_ui_color_key_t</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_start_video_preview_ex"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_start_video_preview_ex">sdvr_ui_start_video_preview_ex</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_DIRECTDRAW_NOLOCK">SDVR_UI_DIRECTDRAW_NOLOCK</A>
+</NOBR></TD>
+<TD width="30*">Define</TD>
+<TD width="10*" align="right">
+<A href="#Top__Defines">9</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_stop_audio_preview"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_stop_audio_preview">sdvr_ui_stop_audio_preview</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Audio___Preview___APIs">10.2</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_draw_frame"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_draw_frame">sdvr_ui_draw_frame</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_stop_video_preview"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_stop_video_preview">sdvr_ui_stop_video_preview</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_draw_yuv"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_draw_yuv">sdvr_ui_draw_yuv</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__sdvr_ui_version"><A HREF="sdvr_ui_sdk.html#Routines__sdvr_ui_version">sdvr_ui_version</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__The___Video___Preview___APIs">10.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Defines__SDVR_UI_ERR_NONE">SDVR_UI_ERR_NONE</A>
+</NOBR></TD>
+<TD width="30*">Define</TD>
+<TD width="10*" align="right">
+<A href="#Top__Defines">9</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_video_preview_mode">sdvr_ui_video_preview_mode</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="sdvr_ui_sdk.html#Types__sdvr_ui_hwnd_t">sdvr_ui_hwnd_t</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">8</A>
+</TD>
+<TD width="10"></TD>
+<TD width="100*"></TD>
+<TD width="30*"></TD>
+<TD width="10*" align="right"></TD>
+</TR>
+</TABLE>
+</P>
+
+
+<!-- SEC_INDEX_CLOSE -->
+<P>
+<HR>
+</P>
+<P align="left">
+Package last modified on: May 15, 2013 at 02:00 UTC.<BR>
+</P>
+
+</BODY>
+</HTML>

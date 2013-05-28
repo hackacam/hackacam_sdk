@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "sdvrdemo_setup_x64", "sdvrdemo_setup_x64.vdproj", "{DF3FF4A0-1898-4E5B-BE48-081860C7EBD0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Default = Debug|Default
+		Release|Default = Release|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DF3FF4A0-1898-4E5B-BE48-081860C7EBD0}.Debug|Default.ActiveCfg = Debug
+		{DF3FF4A0-1898-4E5B-BE48-081860C7EBD0}.Debug|Default.Build.0 = Debug
+		{DF3FF4A0-1898-4E5B-BE48-081860C7EBD0}.Release|Default.ActiveCfg = Release
+		{DF3FF4A0-1898-4E5B-BE48-081860C7EBD0}.Release|Default.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

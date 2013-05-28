@@ -1,0 +1,16 @@
+/*! @defgroup SBL Stretch Base Library
+@{
+This library includes base host side utilities:
+    - SBL::Log namespace which implements general purpose error, warning, info and debugging messages
+    - SBL::Exception class with asssociated macros to throw exceptions and asserts
+    - SBL::Socket class, which wraps Linux sockets
+    - SBL::Net class wraps various network calls
+    - SBL::Thread class wrapping pthread library
+    - SBL::Mutex class wrapping linux mutexes
+    - SBL::CreateMap helps initializing maps
+    - SBL::ParamSet and SBL::ParamBase are used to create parameter sets
+    - SBL::Options is used for command line processing
+
+The main driver for this library is ease of use.
+@}
+*/

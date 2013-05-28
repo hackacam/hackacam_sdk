@@ -1,0 +1,54 @@
+/** @class SBL::Options
+@brief Command line option processing
+@details This class simplifies command line option processing. 
+<h2>Example</h2>
+@verbatim
+class Options : public OptionSet {
+    Option<int>      speed;
+    Option<double>   time;
+    Option<String>   town;
+    Option<bool>     enable;
+    Options(int argc, char* argv[]) : OptionSet("Computes which car to use"),
+            speed (this, "speed",   100,        VerifyRange(0, 150),              "desired speed"),
+            time  (this, "time",    1.0,        VerifyRange(1, 10),               "time en route"),
+            town  (this, "town",    "New York", VerifyEnum("New York", "Boston"), "town of departure"),
+            enable(this, "enable",  false,      0,                                "enable the trip)
+            { parse(argc, argv);    // this is mandatory
+            }
+};
+int main(int argc, char* argv[]) {
+    Options options(argc, argv);
+    if (options.help(std::cout))
+        return 0;
+    if (options.enable) {
+        ....
+    }
+} @endverbatim
+
+<h2>Help message</h2>
+
+The above declaration will cause the following help message printed, when help() method is used: @verbatim
+usage: car_selector [-options]
+    -speed <int>            desired speed
+    -time <float>           time en route
+    -town <string>          town of departure
+    -enable <bool>          enable the trip
+Computes which car to use @endverbatim
+<h2>Option processing</h2>
+Options does not require exact match between command line and option name, as long as match is non ambigous:
+    - car_selector -s 10    will set options.speed to 10
+    - car_slector  -t foo   will cause an error, because 'time' and 'town' match ambigously
+    - car_selector -to foo will cause an error, because foo is not in the list ("New York", "Boston")
+    - car_selector -ti 5    will set options.time to 5.0
+    
+<h2>Initalization</h2>
+Option class is initialized in the constructor, as shown in the example. Each option must be a Option<T> where currently
+T can a bool, int, double or String (String is typedef for const char*). Each option is initialized with:
+    - this : mandatory pointer to the parent OptionSet
+    - name : option name
+    - default : default value
+    - help message : this message is printed by print_help().
+In addition, the OptionSet class constructor takes a header (printed in help before all options) and footer 
+(printed after all options) parameters.
+
+*/

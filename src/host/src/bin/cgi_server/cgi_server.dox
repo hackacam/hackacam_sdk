@@ -1,0 +1,539 @@
+/** @mainpage
+
+Copyright 2013 by Stretch, Inc.,  All Rights Reserved
+
+@tableofcontents
+
+@section introduction Introduction
+
+The purpose of the CGI server is to provide capability to set and retrieve limited set of camera parameters and to configure RTSP server to stream video. The RTSP server capabilities are described briefly here for completeness.
+
+@section references References
+
+The camera adheres to the following standards:
+
+- [RFC 2616](http://tools.ietf.org/html/rfc2616): Hypertext Transfer Protocol HTTP/1.1
+- [RFC 3986](http://tools.ietf.org/html/rfc3986): Uniform Resource Identifier (URI): Generic Syntax
+- [RFC 2326](http://tools.ietf.org/html/rfc2326): Real Time Streaming Protocol (RTSP)
+- [RFC 3550](http://tools.ietf.org/html/rfc3550): RTP: A Transport Protocol for Real-Time Applications
+- [RFC 3984](http://tools.ietf.org/html/rfc3984): RTP Payload Format for H.264 Video
+- [RFC 2435](http://tools.ietf.org/html/rfc2435): RTP Payload Format for JPEG-compressed Video
+- [RFC 3640](http://tools.ietf.org/html/rfc3640): RTP Payload Format for Transport of MPEG-4 Elementary Stream
+- [RFC 826] (http://tools.ietf.org/html/rfc826):  An Ethernet Address Resolution Protocol
+
+@section cmd_format Command format
+
+HTTP requests directed to CGI server include _cgi-bin_ string after the server name or IP address, followed by the name of the command and any parameters. The general format of the CGI request is
+
+    http://<server_name>/cgi-bin/<command_name>?<argument>[=<value>[&<argument>[=<value>...]]]
+
+- _server_name_ is a name or IP address of the camera
+- _cgi-bin_ is a fixed string, which directs the request to CGI server
+- _command_name_ is the name of the command
+- _argument_ is the argument name
+- _value_ is the argument value
+
+The URL must be written conformant to the standard URL encoding described in RFC 3986. The CGI server issues a reply to each command. 
+In the remaining part of this document, the `http://<server_name>/cgi-bin prefix` will be omitted when specifying command URI for brevity. Unless it is explicitly stated in this specification, all requests use HTTP GET command.
+
+Each argument may be specified only once. Arguments may be supplied in any order.
+
+Only characters from the following character set may be used: a-zA-Z0-9:.-+/?=. The forward slash '/' and question mark '?' characters may only be used as URL part separators. The equal sign '=' character may only be used to separate argument name from argument value. 
+
+@note The server does not implement full URL character decoding as specified in RFC 3986 and in particular "percent encoding" is not supported.
+
+@subsection server_replies Server replies
+
+The server replies to each command. The default replies are as follows:
+
+### Success
+
+    HTTP Code:  	200 OK 
+    Content-Type:  	text/plain 
+    Body:
+    OK
+The reply body is command dependent, but if the reply would otherwise be empty, then OK string is sent.
+
+### Failure
+
+    HTTP Code:  	 200 OK
+    Content-Type:  	text/plain 
+    Body:
+    Error: <error description>
+
+@note Even in case of failure, HTTP code 200 is returned. The client must parse message body to determine if the command was successful or not.  
+
+When a server reply to a command is different then described above, it is explicitly listed in this document.
+When a command fails, it does not modify the state of the camera. In other words, checking for error is done before any modifications to the camera state are done.
+
+@subsection querying Querying the server
+
+Many (but not all) commands have arguments _action=get_ and _action=set_. This is indicated by listing specifying two URIs for the command. In those cases, the set argument value is used to set parameters, while the get argument value is used to return values of all parameters associated with the command. Unless explicitly specified otherwise, the format of the body of the reply to _action=get_ argument is:
+
+    <parameter_name>=<parameter_value>
+
+The order of name/value list is undefined. If used, _action=get_ must the only argument.
+
+@subsection setting_params Setting parameters
+
+When parameters are set using the set argument, only those parameters that are given to the command are modified. For example, when setting the date, if the command is `/date?action=set&day=20`, only the current day is changed while all other parameters (month, year, etc ...) remain unchanged.
+
+@section streaming Streaming
+
+@subsection video Video
+
+To access the real time video stream produced by the camera, a client must connect to the server using RTSP protocol:
+
+    rtsp://<server_name>/video/<id>
+
+Where _server_name_ is a name or IP address of the camera and _id_ is an integer in range of 0 to 3 inclusive. Furthermore, the stream must be correctly configured and enabled using _cgi-bin_ commands and described in this document. If a stream is disabled, the camera will reply to initial RTSP commands (such as OPTIONS), but will return RTSP error when a client attempts to issue DESCRIBE, SETUP or PLAY commands for such a stream. The server uses RTSP default port 554.
+The reference client for the RTSP-based streaming is VLC and the camera will stream video as long as the client followed the RFCs as implemented by VLC.
+
+The camera is able to stream a stream to multiple clients simultaneously. 
+The client must maintain a RTSP TCP session to the server. If the client terminates TCP session, the server stops streaming RTP stream to that client. A client may use RTSP GET_PARAMETER commands and the server replies to them, but the server does not use such commands as keep-alives.
+
+@subsection motion_values Motion values
+
+The camera includes motion detection logic. For each 128x128 block, motion is detected by computing the absolute difference between a set of block means and an IIR filtered version of the block means. In addition, an aggregate motion is computed as a sum of all motion values within the image. 
+When enabled (_image?motion_rate_ parameter), motion values are streamed as UDP packets to the address specified by motion_dest parameter. When _motion_rate_ is 1, one UDP packet is sent per one video frame when enabled.
+The format of the UDP motion value packet is as follows:
+
+     0                   1                   2                   3
+     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |       M       |   V           |             seq_num           |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                           timestamp                           |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |    width      |  height       |aggregate mot. |  reserved     |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    | motion value  | motion value  | motion value  | motion value..|
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+The first two bytes contain fixed pattern, characters 'M' and 'V'.   The seq_num field contains a sequence number, which is incremented by one for each UDP motion value packet sent. The initial value of the sequence number is undefined.  The timestamp contains 32-bit timestamp of the frame for which these motion values are generated.
+
+Motion values are represented as 8 bits per one 128x128 block in network byte order, scanning the image from left to right and from top to bottom. The width represents number of 128x128 blocks in horizontal direction (and therefore number of motion values per image line) and height represents number of blocks in the vertical direction. The aggregate motion is the maximum of all motion values for the whole image and is followed by individual motion values, starting from top left corner.  Aggregate motion and motion values are each 8 bit unsigned integers.
+
+Total length of the motion value UDP packet payload is 148 bytes and can be computed as follows:
+- 2 bytes for characters M and V
+- 2 bytes for sequence number
+- 4 bytes for timestamp
+- 4 bytes for width, height, aggregate motion and reserved
+- 15x9 = 135 bytes for motion value (1920x1080 resolution)
+- 1 unused byte
+The rate at which motion values are generated is the maximum rate of all enabled streams. For example, by default, both stream 0 and stream 1 are enabled while other streams are disabled. Stream 1 operates by default at 25 frames per second and stream 1 at 15 frames per second. Thus, motion values will be generated at 25 frames per second. The _motion_rate_ argument of image command controls the sending rate of motion vectors, not their generation. In the example above, and with motion_rate=1, motion frames will transmitted 25 times per second, while with motion_rate=5, at 5 frames per second.
+The side effect of these constraints is that at least one stream must be enabled for motion vectors to be generated, although it is not necessary that any streaming clients are connected.
+
+@section network Network
+
+@subsection network_parameters Network parameters
+
+Section @ref device_info describes _device_info_ command, which is used to manage system parameters, including network settings. This section describes those parameters in more details.
+Certain parameters of the device_info command (called front-end parameters) are only relevant and maintained by the CGI server, while others (called back-end parameters) affect the underlying operating system (Linux) and the network protocol. A user who would log into the device using ssh will be able to detect changes to back-end parameters using standard Linux commands, while front-end parameters are only available via CGI server command line. In addition, certain of the parameters are read-only, while others are read-write. Attempts to modify read-only parameters with `device_info?action=set` command will return an error.
+- _firmware_ is a read-only front-end parameter. 
+- _hostname_ is a read-write back-end parameter.
+- _mac_address_ is a read-write back end parameter.
+- _serial_number_ is a read-only back end parameter. 
+- _model_ is read-write front-end parameter.
+- _motion_dest_ is a read-write front-end parameter
+
+Parameters _ip_address_, _subnet_ and _gateway_ are back-end parameters and their behavior depends on the _dhcp_ settings (these four parameters are called network related parameters).
+- If _dhcp_ is true, then _ip_address_, _subnet_ and _gateway_ are read-only parameters. The DHCP client obtains these parameters from a DHCP server that must be present on the same network link and forwards them to the CGI server, which uses them in reply to `device_info?action=get` command.
+- If _dhcp_ is false, then _ip_address_, _subnet_ and _gateway_ are read-write parameters. DHCP client is not used and the CGI server sets these parameters in the operating system settings (as static IP address).
+Since network settings are only applied during the boot, changes to network related device_info parameters require reboot. Specifically, device will reboot if:
+- _dhcp_ is changed
+- _dhcp_ is  false and _ip_address_, _subnet_ or _gateway_ are changed
+
+The _dhcp_ argument affects how the device acquires network settings, which happens during the boot time.  In the context of this paragraph, network settings means ip address, subnet and gateway address. 
+If _dhcp_ is false, then the last used network settings will be used. For example, if _dhcp_ is true and a command `device_info?dhcp=false` is issued, then network parameters acquired via DHCP will be applied as static values after reboot. Therefore, it is recommened to fully specify desired network parameters when changing _dhcp_ from true to false, for example: 
+
+    device_info?dhcp=false&ip_address=192.168.6.44&subnet=255.255.255.0&gateway=192.168.1.254&action=set
+
+If dhcp is true then the camera attempts to obtain network parameters from a DHCP server. If the server is unavailable, then a fixed set of parameters will be used:
+- ip_address=192.168.1.60
+- subnet=255.255.255.0
+- gateway=192.168.1.254
+
+@subsection recovery Discovery and Recovery
+
+A standard <a href="http://www.avahi.org">Avahi</a> daemon runs on a camera and replies to network discovery requests. The daemon works independently of CGI Server. On most Linux distributions, the avahi-browse command may be used to discover the camera.
+
+In addition, the CGI server implements a proprietary protocol to discover and recover cameras with incorrect network settings. Currently, that protocol is not enabled by default. To enable the protocol, you need to insert the following line into the lighttpd configuration file:
+
+    CGI_SERVER_BCAST    => "magic_bytes bcast_address port"
+
+When enabled, the CGI server will listen for a broadcast IP packet on the specified _port_. The packet first line must be exactly _magic_bytes_. If this is the only line in the packet, the CGI server will execute _device_info?action=get_ command and send the reply to a _bcast_address_ and (_port_ + 1). The reply packet consists of _magic_bytes_, followed by the command reply. Note that all cameras with network discovery enabled will reply to this packet.
+
+If there are more then one line, then the second line must be the camera mac address (in 01:23:45:67:ab format) and the third line must be a command to execute. If the first line matches the _magic_bytes_ and the second line matches mac address, then the CGI server will execute the command and send back the reply (preceeded by _magic_bytes_ line) to _bcast_address_ and _port_ + 1. Note that only the camera with the specified mac_address will reply to this packet.
+
+The line termination in IP packets used in this mechansim is the string _\\r\\n_. The fields in CGI_SERVER_BCAST are separated by one or more spaces. _bcast_address_ and _port_ are optional, if not provided, they default to 255.255.255.255 and 8000. The valid characters for _magic_bytes_ are in 33-126 range.
+
+@note The payload in each UDP packet used in this protocol always starts with _magic_bytes_ followed by \\r\\n.
+
+@note Since this mechanism uses IP broadcast and UDP packets, packet delivery is not guaranteed by the network. For example, many routers are configured to block broadcast traffic. 
+
+@section commands CGI Commands
+
+This section describes individual CGI commands.
+
+@subsection login Login
+
+
+    /login?user=root&password=<password>
+
+Argument | Type   | Valid values       | Description   
+-------- | ------ | ------------------ | ------------- 
+user     | string | root               | User name     
+password | string | [a-zA-Z0-9_]{1,12} | Root password 
+
+The command allows user login. The only supported user is root. Both arguments are mandatory. The initial default password is password. The password may be changed with user command.  After a reboot, the server will reply with an error code to all commands until a login command with correct user and password is received.
+
+### Example
+
+    /login?user=root&password=password
+
+@subsection logout Logout
+
+    /logout?user=root
+
+This command logouts user and the camera will reply with an error code to all further commands until a login with correct user and password is received.
+
+@subsection user User
+
+    /user?action=set?user=root&password=<password>
+
+Valid characters for password are: [a-zA-Z0-9_]. Password must be minimum 1 character and maximum 12 characters long.
+
+@subsection date Date
+
+    /date?action=set&<argument>=<value>
+	/date?action=get
+
+| Argument  |  Type    |  Valid values   |  Description                     |
+| --------- | -------- | --------------- | -------------------------------- |
+| year      |  int     |  2010 ... 2100  |  Current year                    |
+| month     |  int     |  1 .. 12        |  Current month                   |
+| day       |  int     |  1 .. 31        |  Current day                     |
+| hour      |  int     |  0 .. 23        |  Current hour (24 hour format)   |
+| minute    |  int     |  0 .. 59        |  Current minute                  |
+| second    |  int     |  0 .. 59        |  Current second                  |
+| timezone  |  string  |  See Note 1     |  Timezone                        |
+| dst       |  bool    |  true, false    |  Daylight Saving Time            |
+ 
+Timezone is specified by the following string: GMT+HH:MM or GMT-HH:MM (HH is hour in 0..12 range and MM is minute in 0..59). The timezone is interpreted as the time to add to UTC to obtain local time. For example, GMT-08:00 refers to PST (Pacific Standard Time).
+
+DST (Daylight Saving Time), when enabled, causes the system to add one hour to the displayed time. 
+
+After a reboot, the camera updates the date and time, by attempting to contact a NTP server. If that is unsuccessful, a fixed date and time will be set up: 2010-01-01 00:00:00.  @note Changing the date in cgi_server also changes linux system date and vice-versa.
+
+### Reply
+Reply to date does not follow the normal `<parameter>=<value>` format. Instead, the reply is as follows.
+
+    HTTP Code:  	200 OK 
+    Content-Type:  	text/plain 
+    Body:
+    month/day/year hour:minute:second timezone
+
+When DST is enabled, the DST string follows timezone.
+
+### Example
+
+    GET /cgi-bin/date?action=set&year=2012&month=2
+
+This command will update the year and the month. Note that that if when the command is executed, the current day is for example 31, the command will fail.
+
+    GET /cgi-bin/date?action=get
+
+    Reply
+    2/28/2013 23:15:11 GMT+08:00 DST
+
+@subsection firmware Firmware
+
+
+    /firmware?file=<name>    (with POST method)
+    /firmware                (with GET method)
+
+| Argument  |  Type    |  Valid values                     |  Description                        |
+| --------- | -------- | --------------------------------- | ----------------------------------- |
+| file      |  string  |  see below                        |  name of the file to write to flash |
+
+In the first form, this command writes the provided file to flash. The name argument must be one of:
+- rootfs.img.gz	when the provided file is a linux rootfs (written to /dev/mtd3)
+- uImage		when the provided is file Linux kernel (written to /dev/mtd2)
+- u-boot.bin 	when the provided file is uboot (written to /dev/mtd1)
+- local.tar.gz  when the provided file is tarred content of /usr/local (written to /mnt/local/local.tar.gz)
+- startup       when the provided file is the camera startup file
+
+The file content is provided in the HTTP body according to the format given in  RFC 1867, if HTTP POST method is used. In the second form (without argument), the command displays a input form, which allows to browse for the file to flash and send it to the server.
+
+@note It is recommended that no clients are attached to the camera during firmware command execution, particularly for large files, such as rootfs.img.gz. The camera automatically suspends all streaming during the time files are written to flash and temporarily disables the watchdog during the execution of the firmware command, to minimize the risk of flash corruption due to reboot during writing of the files.
+
+### Example
+
+    POST /strech-cgi/firmware?file=rootfs.img.gz HTTP/1.0 
+    Content-Type: multipart/form-data; boundary=XyZ67 
+    Content-Length: <content length>
+    -- XyZ67 
+    Content-Disposition: form-data; name="rootfs.img.gz"; 
+    filename="rootfs.img.gz" 
+    Content-Type: application/octet-stream 
+ 
+    <rootfs.img.gz file content> 
+ 
+    -- XyZ67--
+
+@subsection reboot Reboot
+
+
+    /reboot
+
+The command has no arguments and causes the camera to reboot. Command reply is sent before the reboot starts.
+All camera parameters, except date and time are preserved between reboots, to reset parameters to factory defaults, the reset command must be used.
+
+@note Timezone and dst arguments of the date command are preserved between reboots.
+
+@subsection reset Reset
+
+
+    /reset
+
+The command resets all camera parameters, except those listed below, to their factory default values. Parameters of following commands are not modified:
+- device_info
+- date
+
+@subsection status Status
+
+
+    /status
+
+The command returns the current status of the camera and the important event that happened, with their time and status codes
+- 100:	internal server error
+- 101:	server initialization failed
+- 102:	server started
+- 103:	new status file created
+- 104:	network parameters
+- 105:	firmware flashed
+- 106:	camera rebooted
+- 107:	watchdog reboot
+
+Each time the status command is issued, all the messages accumulated in the status file are returned and the file is erased.
+
+@subsection device_info Device_info
+
+
+    /device_info?action=set&<argument>=<value>
+    /device_info?action=get
+
+| Argument         |  Type     |  Default value                |  Description                           |
+| ---------------- | --------- | ----------------------------- | -------------------------------------- |
+| firmware         |  string   |  firmware and build version   |  Firmware version                      |
+| hostname         |  string   |  ipcam-mac_address            |  Network host name                     |
+| mac_address      |  string   |  hhhhhhhh hhhh                |  Mac address as series of hex digits   |
+| ip_address       |  string   |  192.168.1.60                 |  IP address as 4 groups of 1-3 digits  |
+| serial_number    |  integer  |  1000                         |  Camera serial number                  |
+| dhcp             |  bool     |  true                         |  Enable or disable DHCP                |
+| subnet           |  string   |  255.255.255.0                |  Subnet mask                           |
+| gateway          |  string   |  192.168.1.1                  |  Gateway IP address                    |
+| model            |  string   |  ipcam                        |  Camera model                          |
+| motion_dest      |  string   |  192.168.1.1:9000             |  motion packet destination             |
+| user_data        |  string   |  empty string                 |  arbitrary user data                   |
+| temperature      |  string   |  N/A                          |  camera temperatures                   |
+| uptime           |  integer  |  N/A                          |  time in seconds since server started  |
+| packet_gap       |  integer  |  0                            |  gap between RTP packets in microsecs  |                  
+
+These network related arguments are discussed in section 5.
+_motion_dest_ parameter specifies destination address for the motion vectors and it should be in the format ip_addr:port, for example:
+
+    device_info?action=set&motion_dest=192.168.6.80:5468
+
+This command will send motion vectors for each other frame as UDP packets to the address 192.168.6.80, port 5468.
+
+@note The server does not automatically update hostname after mac address change. Since _device_info_ is not part of _reset_ command, user has to manually update _hostname_ after mac_address change if he wants to preserve ipcam-mac_address format.
+
+The _user_data_ argument can be used to hold arbitrary data user wants to associate with the camera. However, since this argument is passed on URI, usual limitations with respect to available character set apply.
+
+On the cameras that support temperature read-out, the `device_info?action=get` will also report the temperature as a sequence of 5 colon-separated integers in the following format:
+
+    temperature=<current>:<min>:<max>:<abs_min>:<abs_max>
+
+where _min_ and _max_ are minimum and maximum temperatures since last server start and _abs_min_, _abs_max_ are minimum and maximum temperatures ever.
+The server samples temperature once per 10 seconds and reports it in degree Celsius.
+
+The uptime argument reports the time since the server started in seconds. Both uptime and temperature arguments are read-only.
+
+The packet_gap argument specifies a gap to add between successive RTP packets. This setting may help with packet loss when streaming over UDP. For example, an I-frame at default settings may take 20-25 RTP packets to transmit and if two cameras connected to the same switch send an I-frame at the same time, that may cause the switch to drop packets. The packet_gap forces to streamer to insert gaps between successive packets, which helps the switch with multiplexing packets from multiple cameras and reducing packet drops.
+
+### Example
+
+    GET /cgi-bin/device_info?action=get
+
+    HTTP Code:  	200 OK 
+    Content-Type:  	text/plain 
+    Body:
+    firmware=2.3.4
+    hostname=ipcam-01:23:45:67:89:AB
+    mac_address=01:23:45:67:89:AB
+    ip_address=192.168.1.60
+    serial_number=234567890
+    model=ipcam
+    dhcp=true
+    subnet=255.255.0.0
+    gateway=192.168.1.1
+    motion_dest=192.168.6.44:9654
+    user_data=something
+    uptime=12945
+    temperature=33.7:20.2:50.1:18.0:60.0
+
+@subsection stream Stream
+
+
+    /stream?action=set&id=<id>&<argument>=<value>
+    /stream?action=get&id=<id>
+
+| Argument     |  Type   |  Valid values           |  Description                    |
+| ------------ | ------- | ----------------------- | ------------------------------- |
+| id           |  int    |  0, 1, 2, 3             |  Stream ID                      |
+| enable       |  bool   |  true, false            |  if a stream is enabled or not  |
+| encoder      |  string |  h264, mjpeg, mpeg4     | type of an encoder              |
+| rate_control |  string |  cbr, vbr, cq           | Rate control algorithm          |
+| fps          |  int    |  1 .. 30                |  frame rate (frames per second) |
+| width        |  int    |   176 .. 1920 (mult 16) |  stream horizontal resolution   |
+| height       |  int    |  128 .. 1080 (mult 16)  |  stream vertical resolution     |
+| bitrate      |  int    |  100 .. 15000           |  not valid for MJPEG            |
+| max_bitrate  |  int    |  100 .. 15000           |  Maximum bitrate for VBR        |
+| quality      |  int    |  10 .. 90               |  quality                        |
+| gop          |  int    |  1 .. 30                |  GOP size                       |
+| profile      |  string |  base, main, high       |  only for H264, encoder profile |
+| osd          |  bool   |  true, false            |  enable or disable osd for the stream |
+
+All arguments except id and action are optional and if not provided, corresponding parameters are unchanged. 
+
+@note Changing stream parameters while clients are attached may cause clients to malfunction.
+
+_Height_ and _width_ parameters must be multiple of 16. As special case, height values of 1080, 540 and 270 are also valid, even if they are not multiple of 16.
+
+The _osd_ argument enables or disables the OSD display for the stream. The OSD is a date string, displayed in bottom right corner in the following format: dd-MMM-yyyy hh:mm:ss,
+Where MMM is an abbreviated 3 character month, dd is two digit day, yyyy is four digit year, hh is two digit hour (in 24 hour format), mm is 2 digit minute and ss is 2 digit second.
+
+Frame per second (_fps_) must not be bigger then sensor sampling rate (see _sensor_rate_ in the @ref image command). If _fps_ for any stream is bigger then sensor_rate when the camera initializes, it will be silently reduced to _sensor_rate_. If the user attempts to change it during camera operation to a value that is larger then the actual sensor rate, the server will reply with an error. @note Actual sensor rate may be different to what is present in the `image?action=get` command, since the actual rate is set when the camera boots and never changes afterwards.
+
+The _rate_control_ parameter specifies the rate control algorithm used. Different rate control mode use different other parameters according to the following table:
+
+| Rate Control  |  Full Name          |  Used Parameters     |
+| ------------- | ------------------- | -------------------- |
+| CBR           |  Constant Bit Rate  |  bitrate             |
+| VBR           |  Variable Bit Rate  |  bitrate max_bitrate |
+| CQ            |  Constant Quality   |  quality max_bitrate |
+
+In the Constant Quality mode, the quality parameter directly control Quantization Parameters (QP), which in turn affects image quality and bit stream size (i.e. bitrate). However, if that bitrate would exceed max_bitrate, the encoder switches to CBR centered at max_bitrate. In the default Constant Bit Rate, encoder attempts to maintain specified bitrate, by varying QP until bitrate budget is met, usually within 10%. Note that even in CBR mode, abrupt scene or motion changes may lead to temporary bitrate spikes. In VBR mode, user specifies average and max bitrate and the encoder attempts to maintain average bitrate, but allows excursions up to max_bitrate.
+
+The default values for each parameter are described in the following table
+
+| Parameter    | Stream 0 | Stream 1 | Stream 2 |  Stream 3|
+| ------------ | -------- | -------- | -------- | -------- |
+| enable       | true     | false    | false    |  false   |
+| encoder      | h264     | mjpeg    | h264     |  h264    |
+| rate_control | cbr      |          | cbr      |  cbr     |
+| fps          | 25       | 15       | 30       |  15      |
+| width        | 1920     | 480      | 352      |  352     |
+| height       | 1080     | 270      | 240      |  240     |
+| bitrate      | 5000     |          | 500      |  250     |
+| quality      |          | 70       |          |          |
+| gop          | 25       |          | 30       |  15      |
+| profile      | main     |          | main     |  main    |
+
+@subsection image Image
+
+
+    /image?action=set&<argument>=<value>
+    /image?action=get
+
+| Argument     | Type    |  Valid values                      |  Default  |  Description            |
+| ------------ | ------- | ---------------------------------- | --------- | ----------------------- |
+| osd          | bool    |  true, false                       |  false    |  Date OSD               |
+| brightness   | int     |  0 .. 100                          |  50       |  image brightness       |
+| hue          | int     |  0 .. 100                          |  50       |  image hue              |
+| saturation   | int     |  0 .. 100                          |  50       |  image saturation       |
+| contrast     | int     |  0 .. 100                          |  50       |  image contrast         |
+| sharpness    | int     |  0 .. 100                          |  50       |  image sharpness        |
+| exposure     | int     |  0 .. 100                          |  50       |  image exposure         |
+| motion_rate  | int     |  0 .. 100                          |  0        |  motion rate            |
+| flip         | string  |  none, horizontal, vertical, both  |  none     |  flips the image        |
+| cvbs         | bool    |  true, false                       |  false    |  enables CVBS output    |
+| sensor_rate  | int     |  25, 50                            |  30       |  sensor sampling rate   |
+| tdn          | string  |  auto, hardware, day, night        |  auto     |  TrueDayNight setting   |
+
+Image arguments affect all the streams. For example, if image flipping is applied, it will be present in all streams.
+
+@note Changing osd with image command is equivalent to changing it for all streams.
+
+The _motion_rate_ parameter controls how often motion values are sent. When it is 0, no motion values are sent. Value N means that motion values are sent each Nth frame.
+Motion vector destination is part of device_info command.
+
+Unlike all other arguments, the _flip_ argument is relative to the current flip state. For example, if flip is vertical and a command `image?flip=horizontal` is used, the result flip state will be both.
+
+_Sensor_rate_ argument controls sensor sampling frequency. Changing that value does not cause any immediate changes, because sensor rate can only be changed when the camera initializes. Consequently, the camera must be rebooted after sensor rate was changed for that setting to have effect.
+
+_tdn_ mode changes  how the camera determines day or night conditions. In auto mode, the camera makes true day/night decisions (TDN), which affect IR filter by analyzing the incoming video frames. In hardware mode, the TDN logic is driven by hardware. The actual mechanism used is platform dependent. The final two choices are manual modes: day installs the IR cut filter and night removes it.
+
+@subsection snapshot Snapshot
+
+
+    /snapshot?action=set&<argument>=<value>
+    /snapshot?action=get
+    /snapshot?action=send
+
+| Argument   | Type | Valid values |  Default | Description                |
+| ---------- | ---- | ------------ | -------- | -------------------------- |
+| decimation | int  | 1, 4, 16     |  16      | snapshot decimation factor |
+
+The command allows to set up and retrieve snapshot parameters and retrieve a snaphot. The snapshot resolution is always decimated from the input video size. For 1080P HD video:
+- decimation 1:		1920x1080
+- decimation 4:		960x540
+- decimation 16:	480x270
+
+The set command sets up snapshot resolution and the send command sends out the snapshot in the reply to HTTP GET command. The snapshot is always encoded as a single MJPEG frame.
+
+@subsection roi Regions of Interest
+
+    /roi?id=<n>&action=get
+    /roi?id=<n>&action=set&rectangles=<list_of_rectangles>
+    /roi?id=<n>&action=add&rectangles=<list_of_rectangles>
+    /roi?id=<n>&action=delete&rectangles=<list_of_rectangles>
+    /roi?id=<n>&action=clear
+
+| Argument   | Type            | Valid values |  Default | Description                  |
+| ---------- | --------------- | ------------ | -------- | ---------------------------- |
+| id         | int             | 0            |  0       | id of the region of interest |
+| rectangles | list rectangles | see below    |          | list of rectangels           |
+
+The command edits region of interest. The _id_ argument specifies the region. Currently only id=0 is supported and it allows to specify the privacy mask. The id argument is optional and defaults to 0.
+
+Regions are lists of rectangles. A rectangle is specified by a list of four points in the following order: x0, y0, x1, y0. Each point may be either a floating point number or an integer number. Floating point values must be in the range 0.0 .. 1.0 where the point (0.0, 0.0) represents the upper left corner and the point (1.0,1.0) represents the lower right corner. Integer values must in the range 0 .. WIDTH -1 for the horizontal coordinates and 0 .. HEIGHT - 1 for vertical coordinates, where WDITH=1920 and HEIGHT=1080.
+
+Action _get_ sends back a reply with the list of rectangles, using integer values. 
+Action _set_ sets the list of rectangles for a region, using either integer or floating point values. 
+Action _add_ adds to the current list of rectangles, the rectangles specified in the _rectangles_ argument.
+Action _delete_  removes rectangles from a region of interest. For each rectangle in the _rectangles_ argument, if any of the rectangles in the region intesects that rectangle, it is delete.
+Action _clear_ removes all rectangles in the given region.
+
+@note
+It is possible to specify points using the _rectangles_ argument, by setting x1==x0 and y1==y0. Points and lines (when x1==x0 or y1==y0, but not both) are ignored for _set_ and _add_ commands, but are valid arguments for _delete_command.
+
+
+### Example
+    
+    /roi?action=set&rectangles=0.1,0.2,0.3,0.4
+    /roi?action=get
+        id=0
+        points=0.1,0.2,0.3,0.4
+    /roi?action=add&rectangles=0.8,0.9,0.7,0.8
+    /roi?action=get
+        id=0
+        points=0.1,0.2,0.3,0.4,0.7,0.8,0.8,0.9
+    /roi?action=delete&rectangles=0.15,0.25,0.15,0.25
+    /roi?action=get
+        id=0
+        points=0.7,0.8,0.8,0.9
+
+**/

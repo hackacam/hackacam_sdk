@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StreamingChannelList version="1.0">
+
+    <StreamingChannel version="1.0">
+        <id>0</id>
+        <channelName>Stream</channelName>
+        <enabled>true</enabled>
+
+        <Transport>
+            <ControlProtocolList>
+                <ControlProtocol>
+                    <streamingTransport>RTSP</streamingTransport>
+                </ControlProtocol>
+            </ControlProtocolList>
+        </Transport>
+
+        <Video>
+            <enabled>true</enabled>
+            <videoInputChannelID>0</videoInputChannelID>
+            <videoCodecType>H.264</videoCodecType>
+            <videoResolutionWidth>1920</videoResolutionWidth>
+            <videoResolutionHeight>1080</videoResolutionHeight>
+            <videoQualityControlType>VBR</videoQualityControlType>
+            <!-- For 1080P30 and 720P60 recommended vbrUpperCap is 7000 -->
+            <!-- and vbrLowerCap is 5000                                -->
+            <vbrUpperCap>7000</vbrUpperCap>
+            <vbrLowerCap>5000</vbrLowerCap>
+            <maxFrameRate>3000</maxFrameRate>
+            <!-- the period in millisecond between each IDR. Used  -->
+            <!-- for calculating the GOP size.                     -->
+            <!-- GOP =  (maxFrameRate * keyFrameInterval) / 100000 -->
+            <!-- e,g, if maxFrameRate is 3000 and keyFrameInterval -->
+            <!--      is 500, the GOP size is 15                   -->
+            <keyFrameInterval>500</keyFrameInterval>
+        </Video>
+    </StreamingChannel>
+
+    <StreamingChannel version="1.0">
+        <id>1</id>
+        <channelName>Stream-Secondary</channelName>
+        <enabled>true</enabled>
+
+        <Transport>
+            <ControlProtocolList>
+                <ControlProtocol>
+                    <streamingTransport>RTSP</streamingTransport>
+                </ControlProtocol>
+            </ControlProtocolList>
+        </Transport>
+
+        <Video>
+            <enabled>false</enabled>
+            <videoInputChannelID>0</videoInputChannelID>
+            <videoCodecType>MJPEG</videoCodecType>
+            <videoResolutionWidth>480</videoResolutionWidth>
+            <videoResolutionHeight>270</videoResolutionHeight>
+            <videoQualityControlType>VBR</videoQualityControlType>
+            <vbrUpperCap>7000</vbrUpperCap>
+            <vbrLowerCap>5000</vbrLowerCap>
+            <!-- For MJPEG, fixedQuality is required, bitrates are ignored -->
+            <fixedQuality>70</fixedQuality>
+            <maxFrameRate>3000</maxFrameRate>
+        </Video>
+    </StreamingChannel>
+
+    <StreamingChannel version="1.0">
+        <id>2</id>
+        <channelName>Stream-Third</channelName>
+        <enabled>true</enabled>
+
+        <Transport>
+            <ControlProtocolList>
+                <ControlProtocol>
+                    <streamingTransport>RTSP</streamingTransport>
+                </ControlProtocol>
+            </ControlProtocolList>
+        </Transport>
+
+        <Video>
+            <enabled>false</enabled>
+            <videoInputChannelID>0</videoInputChannelID>
+            <videoCodecType>H.264</videoCodecType>
+            <videoResolutionWidth>480</videoResolutionWidth>
+            <videoResolutionHeight>270</videoResolutionHeight>
+            <videoQualityControlType>CBR</videoQualityControlType>
+            <constantBitRate>1500</constantBitRate>
+            <maxFrameRate>3000</maxFrameRate>
+        </Video>
+    </StreamingChannel>
+
+    <StreamingChannel version="1.0">
+        <id>3</id>
+        <channelName>Stream-Fourth</channelName>
+        <enabled>true</enabled>
+
+        <Transport>
+            <ControlProtocolList>
+                <ControlProtocol>
+                    <streamingTransport>RTSP</streamingTransport>
+                </ControlProtocol>
+            </ControlProtocolList>
+        </Transport>
+
+        <Video>
+            <enabled>false</enabled>
+            <videoInputChannelID>0</videoInputChannelID>
+            <videoCodecType>H.264</videoCodecType>
+            <videoResolutionWidth>480</videoResolutionWidth>
+            <videoResolutionHeight>270</videoResolutionHeight>
+            <videoQualityControlType>CBR</videoQualityControlType>
+            <constantBitRate>1500</constantBitRate>
+            <maxFrameRate>3000</maxFrameRate>
+        </Video>
+    </StreamingChannel>
+
+</StreamingChannelList>
+
+<VideoInputChannelList version="1.0">
+    <VideoInputChannel version="1.0" xmlns="urn:psialliance-org">
+        <id>0</id>
+        <inputPort>0</inputPort>
+    </VideoInputChannel>
+</VideoInputChannelList>

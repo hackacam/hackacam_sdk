@@ -1,0 +1,144 @@
+/****************************************************************************\
+*  Copyright C 2012 Stretch, Inc. All rights reserved. Stretch products are  *
+*  protected under numerous U.S. and foreign patents, maskwork rights,       *
+*  copyrights and other intellectual property laws.                          *
+*                                                                            *
+*  This source code and the related tools, software code and documentation,  *
+*  and your use thereof, are subject to and governed by the terms and        *
+*  conditions of the applicable Stretch IDE or SDK and RDK License Agreement *
+*  (either as agreed by you or found at www.stretchinc.com). By using these  *
+*  items, you indicate your acceptance of such terms and conditions between  *
+*  you and Stretch, Inc. In the event that you do not agree with such terms  *
+*  and conditions, you may not use any of these items and must immediately   *
+*  destroy any copies you have made.                                         *
+\****************************************************************************/
+/*
+<h1>SBL Param and ParamSet>/h1>
+
+In short, these classes provide iterable structures. Specifically a templated class Param<T> can hold a parameter of basic type, such as integer, boolean, string or float. ParamSet class can hold Param<T> or other ParamSets.
+
+The secondary application for ParamSet is to parse command line arguments.
+
+Param<T> provides facilities for
+    - resetting to a default value
+    - checkpointing, i.e. saving the current value which can be later restored
+    - reverting to a backup value
+    - validating new values via custom validation functors
+    - printing name and value to a stream
+
+ ParamSet provides facilities for:
+    - iterating over Params and ParamSet held in a ParamSet
+    - accessing members directory or by name
+    - resetting, checkpointing and reverting all members
+    - printing all members to a stream
+    - setting all members from a name=value map
+
+Best way to understand how it works to see examples. Let's assume the following declarations: @verbatim
+class Stream : public ParamSet {
+    Param<int>      id;
+    Param<string>   encoder;
+    Param<int>      width;
+    Param<int>      height;
+    Param<bool>     enabled;
+    Stream() : ParamSet("stream"),
+               id(this, "id", 0, VerifyRange(0, 3)),
+               encoder(this, "encoder", "h264", VerifyEnum("h264", "mjpeg", "mpeg4")),
+               width(this, "width", 1920, VerifyResolution()),
+               height(this, "height", 1020, VerifyResolution()),
+               enabled(this, "enabled", true)
+               {}
+}; @endverbatim
+
+Class Stream holds 3 int Params, one string param and one bool param. The Stream constructor calls constructor for all members (this is mandatory) to provide pointer to the parent structure (i.e. this), alphanumber name of the parameter, it's default value and a validator functor, which will be used in each assignement to the parameter.
+
+With this declaration, it is now possible to instantiate a Stream: @verbatim
+Stream stream;
+cout << stream.encoder;   // outputs h264
+cout << stream.height;    // outputs 19210
+stream.enabled = false;   // simply assigned false 
+stream.encoder = "mpeg4"; // VerifyEnum validator will be called, since mpeg4 is one of allowed values, assignemnt will succeed.
+stream.encoder - "mpeg2"; // since mpeg2 is not allowed, this assignemnt will fail and an exception will be thrown
+
+<h2>Validators</h2>
+The framework provides few standard validators, such VerifyRange and VerifyEnum:
+    - VerifyRange checks if numeric value is between min and max and (optionally) if it is multiple of a something
+    - VerifyEnum checks if a string value is one of allowed values.
+
+If these validators are insufficient it is very easy to write a custom functor, which must provide a bool operator()(). VerifyResolution above is an example: @verbatim
+struct VerifyResoltion {
+    bool operator()(int value);
+}; @endverbatim
+
+<h2>Defaults and checkpointing</h2>
+
+It is very common to have to reset parameters to default values, and to save and restore them from backup. For example, when parsing input data, parameters are assigned new values, but if one value is invalid, we often need to invalidate not just the offending assignment but all assignement done so far.
+
+With ParamSet as above, it is thus possible to call:
+    - encoder.reset();      // this will set encode to h264, since this is the default
+    - encoder.checkpt();    // this will remember the current value of the encoder
+    - encoder.revert();     // this will revert encoder to previously stored value
+
+Exactly the same operators are available on ParamSets, it is thus possible to do:
+    - stream.reset();       // resets all stream paramerets to defaults
+    - stream.checkpt();     // checkpoints the whole stream
+    - stream.revert();      // reverts the stream from previous value
+
+<h2>Input and output</h2>
+Individual Param<T> can always be  streamed out, they are output in name=value format. ParamSet can also be streamed out, which causes all the memebers to be output in name=value format. ParamSet offers a static method to set up a end-of-line separate ParamSet::set_eol(): @verbatim
+cout << encoder;            // will output encoder=h264
+ParamSet::set_eol("&");     // set up '&' as separator
+cout << stream;             // will output encoder=h264&id=0&width=1920&height=1080&enabled=1
+@endverbatim
+
+Individual Param<T> can be set directly as previous examples show. In addition, they can be set from ParamSet by name or from an input map: @verbatim
+stream.encoder = "mjpeg";
+stream.set("encoder", "mjpeg");
+map<const char*, const char*, StrCompare> arg_map; // StrCompare is necessary to compary content and not address of const char*
+arg_map["encoder"] = "mjpeg";
+stream.set(arg_map);
+@endverbatim
+These three assignement have identical effect.
+
+<h2>Arrays</h2>
+ParamSet can hold other ParamSets or array of ParamSets. In the later case, init() method is used to initalize the array, since C++ doesn't allow to provide parameters to array member constructors: @verbatim
+struct Top : public ParamSet {
+    Stream  stream[2];
+    Top() : ParamSet("top") {
+        stream[0].init("id=0&encoder=mjpeg", this, 0);
+        stream[1].init("id=1&encoder=h2h4", this, 1);
+    }
+};
+@endverbatim
+
+Here, struct Top hold an array of two Streams. Since it is not possible to call constructors of each one, init() method initializes both of them. Note that the stream[0].name() == "stream[0]" and stream[1].name() == "stream[1]", i.e. the init function appends the  string [%d] to the member name, to make sure that each name is unique.
+
+<h2>Command line processing</h2>
+ParamSet can be used to parse command line arguments. Here is an example: @verbatim
+struct Options : private ParamSet {
+    Param<int>      int_param;
+    Param<bol>      option;
+    Param<string>   string_param;
+    Options(int argc, char* argv[]) : ParamSet("options"),
+        int_param(this, "int",  0,  0, "this is an integer param"),
+        option   (this, "bool", false, 0, "boolean parameter"),
+        string_param(this, "string", "", 0, "string parameter")
+        { parse_args(argc, argv); }
+}; @endverbatim
+The parse_args() method parse argv[] vector and sets up corresponding Param based on its name. For example, with the declaration above and the following command line:  -int_param 10 --option -string foo
+    - int_param will have value 10
+    - option will be true
+    - string_param will be foo. 
+
+parse_args does not look for exact match between argument name and parameter name, any non-zero initial match witch is not ambigous will be accepted. This is why '-string foo' in the example above works as well as '-str foo' or '-string_param foo'.
+
+The argument name must start with one or two dashes, which are ignored.
+
+The last argument to Param<T> constructor is help message. Calling options.help(cout) will print the following help message:
+    - -int_param <int>            this is an integer param
+    - -option                     boolean parameter
+    - -string_param<string>       string parameter
+
+Param<bool> are special and different from others, because they do not support argument values (i.e. this: -option true is an error).
+The value of a boolean parameter will be toggled when the argument is encountered.
+
+*/

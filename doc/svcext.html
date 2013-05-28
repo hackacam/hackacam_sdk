@@ -1,0 +1,1771 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META http-equiv="content-type" content="text/html; charset=iso-8859-1">
+
+<TITLE>SVC Sub-bitstream extractor and Rewriter (svcext)</title>
+<SCRIPT TYPE="text/javascript" LANGUAGE="JavaScript1.2">
+<!--
+function get_cookie(name) 
+{
+    var start = document.cookie.indexOf(name + "=");
+    var len = start+name.length + 1;
+    if (! start && name != document.cookie.substring(0,name.length)) {
+	return null;
+    }
+    if (start == -1) {
+	return null;
+    }
+    var end = document.cookie.indexOf(";", len);
+    if (end == -1) {
+	end = document.cookie.length;
+    }
+    return unescape(document.cookie.substring(len, end));
+}
+
+function set_cookie(name, value, expires, path, domain, secure) 
+{
+    document.cookie = name + "=" + escape(value) +
+	( expires ? ";expires=" + expires.toGMTString() : "") +
+	( path ? ";path=" + path : "") + 
+	( domain ? ";domain=" + domain : "") +
+	( secure ? ";secure" : "");
+}
+
+function put_style(style) {
+    var expires = new Date();
+    expires.setTime(expires.getTime() + 365 * 24 * 60 * 60 * 1000);
+    set_cookie('cdoc_style', style, expires);
+}
+
+function get_style() {
+    var style = get_cookie('cdoc_style');
+    if (style == null) {
+	style = 'relative';
+	put_style(style);
+    }
+    return style;
+}
+
+function click_put_style(style) {
+    put_style(style);
+    location.reload();
+}
+
+document.writeln('<STYLE TYPE="text/css">');
+document.writeln('<!--');
+var style = get_style();
+if (style == 'fixed-10pt') {
+	document.writeln('@media screen {');
+	document.writeln('    BODY {');
+	document.writeln('	background: rgb(220, 220, 220);');
+	document.writeln('	margin-left: .25in;');
+	document.writeln('	margin-right: .25in;');
+	document.writeln('    }');
+	document.writeln('}');
+	document.writeln('BODY {');
+	document.writeln('    font-family: Arial, sans-serif;');
+	document.writeln('    font-size: 10pt;');
+	document.writeln('    text-align: justify;');
+	document.writeln('}');
+	document.writeln('H1 {');
+	document.writeln('    font-size: 18pt;');
+	document.writeln('    color: rgb(255, 0, 0);');
+	document.writeln('    text-align: center;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H2 {');
+	document.writeln('    font-size: 14pt;');
+	document.writeln('    color: rgb(0, 0, 255);');
+	document.writeln('    margin-top: 14pt;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H2.int {');
+	document.writeln('    font-size: 14pt;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('    margin-top: 14pt;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H3 {');
+	document.writeln('    font-size: 12pt;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('A {');
+	document.writeln('    text-decoration: none;');
+	document.writeln('}');
+	document.writeln('A:link {');
+	document.writeln('    color: rgb(48, 96, 255);');
+	document.writeln('}');
+	document.writeln('A:visited {');
+	document.writeln('    color: rgb(48, 96, 255);');
+	document.writeln('}');
+	document.writeln('A:hover { ');
+	document.writeln('    background: rgb(255, 255, 0);');
+	document.writeln('} ');
+	document.writeln('PRE.cdef A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdef A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdef {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-weight: bold;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-weight: bold;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.ccode A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.ccode A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.ccode {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-size: 9pt;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.text A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.text A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.text {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-size: 9pt;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('TD.int A:link {');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('TD.int A:visited {');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('DIV.descr {');
+	document.writeln('   padding-left: 20pt;');
+	document.writeln('}');
+	document.writeln('* UL {');
+	document.writeln('    list-style: disc;');
+	document.writeln('}');
+	document.writeln('* LI {');
+	document.writeln('    margin-top: 5pt;');
+	document.writeln('}');
+	document.writeln('TABLE {');
+	document.writeln('    font-size: 10pt;');
+	document.writeln('    margin-top: 0in;');
+	document.writeln('    margin-bottom: 0in;');
+	document.writeln('}');
+	document.writeln('TABLE.index {');
+	document.writeln('    font-size: 9pt;');
+	document.writeln('    margin-top: 0in;');
+	document.writeln('    margin-bottom: 0in;');
+	document.writeln('}');
+} else if (style == 'fixed-12pt') {
+	document.writeln('@media screen {');
+	document.writeln('    BODY {');
+	document.writeln('	background: rgb(220, 220, 220);');
+	document.writeln('	margin-left: .25in;');
+	document.writeln('	margin-right: .25in;');
+	document.writeln('    }');
+	document.writeln('}');
+	document.writeln('BODY {');
+	document.writeln('    font-family: Arial, sans-serif;');
+	document.writeln('    font-size: 12pt;');
+	document.writeln('    text-align: justify;');
+	document.writeln('}');
+	document.writeln('H1 {');
+	document.writeln('    font-size: 18pt;');
+	document.writeln('    color: rgb(255, 0, 0);');
+	document.writeln('    text-align: center;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H2 {');
+	document.writeln('    font-size: 16pt;');
+	document.writeln('    color: rgb(0, 0, 255);');
+	document.writeln('    margin-top: 16pt;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H2.int {');
+	document.writeln('    font-size: 16pt;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('    margin-top: 16pt;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H3 {');
+	document.writeln('    font-size: 14pt;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('A {');
+	document.writeln('    text-decoration: none;');
+	document.writeln('}');
+	document.writeln('A:link {');
+	document.writeln('    color: rgb(48, 96, 255);');
+	document.writeln('}');
+	document.writeln('A:visited {');
+	document.writeln('    color: rgb(48, 96, 255);');
+	document.writeln('}');
+	document.writeln('A:hover { ');
+	document.writeln('    background: rgb(255, 255, 0);');
+	document.writeln('} ');
+	document.writeln('PRE.cdef A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdef A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdef {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-weight: bold;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-weight: bold;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.ccode A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.ccode A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.ccode {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-size: 10pt;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.text A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.text A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.text {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-size: 10pt;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('TD.int A:link {');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('TD.int A:visited {');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('DIV.descr {');
+	document.writeln('   padding-left: 24pt;');
+	document.writeln('}');
+	document.writeln('* UL {');
+	document.writeln('    list-style: disc;');
+	document.writeln('}');
+	document.writeln('* LI {');
+	document.writeln('    margin-top: 6pt;');
+	document.writeln('}');
+	document.writeln('TABLE {');
+	document.writeln('    font-size: 12pt;');
+	document.writeln('    margin-top: 0in;');
+	document.writeln('    margin-bottom: 0in;');
+	document.writeln('}');
+	document.writeln('TABLE.index {');
+	document.writeln('    font-size: 10pt;');
+	document.writeln('    margin-top: 0in;');
+	document.writeln('    margin-bottom: 0in;');
+	document.writeln('}');
+} else {
+	document.writeln('@media screen {');
+	document.writeln('    BODY {');
+	document.writeln('	background: rgb(220, 220, 220);');
+	document.writeln('	margin-left: .25in;');
+	document.writeln('	margin-right: .25in;');
+	document.writeln('    }');
+	document.writeln('}');
+	document.writeln('BODY {');
+	document.writeln('    font-family: Arial, sans-serif;');
+	document.writeln('    font-size: 1em;');
+	document.writeln('    text-align: justify;');
+	document.writeln('}');
+	document.writeln('H1 {');
+	document.writeln('    font-size: 1.8em;');
+	document.writeln('    color: rgb(255, 0, 0);');
+	document.writeln('    text-align: center;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H2 {');
+	document.writeln('    font-size: 1.4em;');
+	document.writeln('    color: rgb(0, 0, 255);');
+	document.writeln('    margin-top: 1.4em;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H2.int {');
+	document.writeln('    font-size: 1.4em;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('    margin-top: 1.4em;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('H3 {');
+	document.writeln('    font-size: 1.2em;');
+	document.writeln('    page-break-after: avoid;');
+	document.writeln('}');
+	document.writeln('A {');
+	document.writeln('    text-decoration: none;');
+	document.writeln('}');
+	document.writeln('A:link {');
+	document.writeln('    color: rgb(48, 96, 255);');
+	document.writeln('}');
+	document.writeln('A:visited {');
+	document.writeln('    color: rgb(48, 96, 255);');
+	document.writeln('}');
+	document.writeln('A:hover { ');
+	document.writeln('    background: rgb(255, 255, 0);');
+	document.writeln('} ');
+	document.writeln('PRE.cdef A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdef A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdef {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-weight: bold;');
+	document.writeln('    color: rgb(176, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.cdefint {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-weight: bold;');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('PRE.ccode A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.ccode A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.ccode {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-size: 0.9em;');
+	document.writeln('    color: rgb(40, 40, 40);');
+	document.writeln('}');
+	document.writeln('PRE.text A:link {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.text A:visited {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('PRE.text {');
+	document.writeln('    font-family: "Courier New", monospace;');
+	document.writeln('    font-size: 0.9em;');
+	document.writeln('    color: rgb(0, 0, 0);');
+	document.writeln('}');
+	document.writeln('TD.int A:link {');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('TD.int A:visited {');
+	document.writeln('    color: rgb(235, 27, 235);');
+	document.writeln('}');
+	document.writeln('DIV.descr {');
+	document.writeln('   padding-left: 2em;');
+	document.writeln('}');
+	document.writeln('* UL {');
+	document.writeln('    list-style: disc;');
+	document.writeln('}');
+	document.writeln('* LI {');
+	document.writeln('    margin-top: 0.5em;');
+	document.writeln('}');
+	document.writeln('TABLE {');
+	document.writeln('    font-size: 1em;');
+	document.writeln('    margin-top: 0in;');
+	document.writeln('    margin-bottom: 0in;');
+	document.writeln('}');
+	document.writeln('TABLE.index {');
+	document.writeln('    font-size: 0.9em;');
+	document.writeln('    margin-top: 0in;');
+	document.writeln('    margin-bottom: 0in;');
+	document.writeln('}');
+}
+document.writeln('-->');
+document.writeln('</STYLE>');
+//-->
+</SCRIPT>
+</HEAD>
+
+<BODY>
+
+<H1>SVC Sub-bitstream extractor and Rewriter &nbsp; (svcext)</H1>
+
+<CENTER>Last modified on May 15, 2013 at 02:00 UTC</CENTER>
+<!-- CDOC-CHOOSE-STYLE --><CENTER>
+<!-- CDOC-CHOOSE-STYLE --><A HREF="javascript:click_put_style('relative');">normal, </A>
+<!-- CDOC-CHOOSE-STYLE --><A HREF="javascript:click_put_style('fixed-10pt');">10pt, </A>
+<!-- CDOC-CHOOSE-STYLE --><A HREF="javascript:click_put_style('fixed-12pt');">12pt</A>
+<!-- CDOC-CHOOSE-STYLE --></CENTER>
+
+<!-- last_modified : May 15, 2013 at 02:00 UTC -->
+
+<!-- package : svcext -->
+
+<!-- short-description : SVC Sub-bitstream extractor and Rewriter -->
+
+<!-- contact_name :  -->
+
+<!-- contact_email :  -->
+
+<!-- copyright :  -->
+
+<!-- cdoc-version : 2.4.5 -->
+<!-- ANCHOR_TABLE
+"Package"	"svcext"	"svcext.html"
+"Section"	"Include"	"Top__Include"
+"Section"	"Introduction"	"Top__Introduction"
+"Section"	"Usage model"	"Top__Usage___model"
+"Section"	"Pseudo Code"	"Top__Pseudo___Code"
+"Section"	"Types"	"Top__Types"
+"Typedef"	"st_svcext_error_e"	"Types__st_svcext_error_e"
+"Typedef"	"ST_SVCEXT_NO_ERROR"	"Types__ST_SVCEXT_NO_ERROR"
+"Typedef"	"ST_SVCEXT_OUT_OF_MEMORY"	"Types__ST_SVCEXT_OUT_OF_MEMORY"
+"Typedef"	"ST_SVCEXT_INVALID_POINTER"	"Types__ST_SVCEXT_INVALID_POINTER"
+"Typedef"	"ST_SVCEXT_UNSUPPORTED_SEI"	"Types__ST_SVCEXT_UNSUPPORTED_SEI"
+"Typedef"	"ST_SVCEXT_NO_STARTCODE"	"Types__ST_SVCEXT_NO_STARTCODE"
+"Typedef"	"ST_SVCEXT_UNSUPPORTED_NAL"	"Types__ST_SVCEXT_UNSUPPORTED_NAL"
+"Typedef"	"ST_SVCEXT_LAYERS_EXCEED_RANGE"	"Types__ST_SVCEXT_LAYERS_EXCEED_RANGE"
+"Typedef"	"ST_SVCEXT_MISSING_SEI"	"Types__ST_SVCEXT_MISSING_SEI"
+"Typedef"	"ST_SVCEXT_UNEXPECTED_PARAMSET"	"Types__ST_SVCEXT_UNEXPECTED_PARAMSET"
+"Typedef"	"ST_SVCEXT_MISSING_PARAMSET"	"Types__ST_SVCEXT_MISSING_PARAMSET"
+"Typedef"	"ST_SVCEXT_LAYER_NOT_FOUND"	"Types__ST_SVCEXT_LAYER_NOT_FOUND"
+"Typedef"	"ST_SVCEXT_FAIL"	"Types__ST_SVCEXT_FAIL"
+"Typedef"	"ST_SVCEXT_NOT_SUPPORTED"	"Types__ST_SVCEXT_NOT_SUPPORTED"
+"Typedef"	"ST_SVCEXT_BAD_VALUE"	"Types__ST_SVCEXT_BAD_VALUE"
+"Typedef"	"ST_SVCEXT_BAD_SLICE_SCALABLE_EXTENSION"	"Types__ST_SVCEXT_BAD_SLICE_SCALABLE_EXTENSION"
+"Typedef"	"ST_SVCEXT_BAD_PARSE_PREFIX_NAL"	"Types__ST_SVCEXT_BAD_PARSE_PREFIX_NAL"
+"Typedef"	"ST_SVCEXT_BAD_CHROMA_FORMAT_IDC"	"Types__ST_SVCEXT_BAD_CHROMA_FORMAT_IDC"
+"Typedef"	"ST_SVCEXT_BAD_SPS"	"Types__ST_SVCEXT_BAD_SPS"
+"Typedef"	"ST_SVCEXT_BAD_SSEI_TEMPORAL_LEVEL_NESTING_FLAG"	"Types__ST_SVCEXT_BAD_SSEI_TEMPORAL_LEVEL_NESTING_FLAG"
+"Typedef"	"ST_SVCEXT_BAD_SSEI_PRIORITY_LAYER_INFO_PRESENT_FLAG"	"Types__ST_SVCEXT_BAD_SSEI_PRIORITY_LAYER_INFO_PRESENT_FLAG"
+"Typedef"	"ST_SVCEXT_BAD_SSEI_SUB_PIC_LAYER_FLAG"	"Types__ST_SVCEXT_BAD_SSEI_SUB_PIC_LAYER_FLAG"
+"Typedef"	"ST_SVCEXT_BAD_SSEI_IROI_DIVISION_INFO_PRESENT_FLAG"	"Types__ST_SVCEXT_BAD_SSEI_IROI_DIVISION_INFO_PRESENT_FLAG"
+"Typedef"	"ST_SVCEXT_BAD_SSEI_PARAMETER_SETS_INFO_PRESENT_FLAG"	"Types__ST_SVCEXT_BAD_SSEI_PARAMETER_SETS_INFO_PRESENT_FLAG"
+"Typedef"	"ST_SVCEXT_BAD_SSEI_BITSTREAM_RESTRICTION_INFO_PRESENT_FLAG"	"Types__ST_SVCEXT_BAD_SSEI_BITSTREAM_RESTRICTION_INFO_PRESENT_FLAG"
+"Typedef"	"ST_SVCEXT_BAD_SSEI_QUALITY_ID"	"Types__ST_SVCEXT_BAD_SSEI_QUALITY_ID"
+"Typedef"	"st_svcext_config_t"	"Types__st_svcext_config_t"
+"Typedef"	"st_svcext_action_e"	"Types__st_svcext_action_e"
+"Typedef"	"ST_SVCEXT_NAL_SKIP"	"Types__ST_SVCEXT_NAL_SKIP"
+"Typedef"	"ST_SVCEXT_NAL_COPY"	"Types__ST_SVCEXT_NAL_COPY"
+"Typedef"	"ST_SVCEXT_NAL_PROCESS"	"Types__ST_SVCEXT_NAL_PROCESS"
+"Typedef"	"st_svcext_layer_info_t"	"Types__st_svcext_layer_info_t"
+"Typedef"	"st_svcext_svc_info_t"	"Types__st_svcext_svc_info_t"
+"Typedef"	"st_svcext_preview_info_t"	"Types__st_svcext_preview_info_t"
+"Typedef"	"st_svcext_avc_packet_info_t"	"Types__st_svcext_avc_packet_info_t"
+"Typedef"	"st_svcext_t"	"Types__st_svcext_t"
+"Section"	"Defines"	"Top__Defines"
+"Define"	"EXTERN"	"Defines__EXTERN"
+"Define"	"SVCEXT_MAX_SPATIAL_LAYERS"	"Defines__SVCEXT_MAX_SPATIAL_LAYERS"
+"Define"	"SVCEXT_MAX_TEMPORAL_LEVELS"	"Defines__SVCEXT_MAX_TEMPORAL_LEVELS"
+"Section"	"Routines"	"Top__Routines"
+"Section"	"Miscellaneous"	"Routines__Miscellaneous"
+"Routine"	"st_svcext_init"	"Routines__st_svcext_init"
+"Routine"	"st_svcext_delete"	"Routines__st_svcext_delete"
+"Routine"	"st_svcext_preview"	"Routines__st_svcext_preview"
+"Routine"	"st_svcext_process"	"Routines__st_svcext_process"
+"Routine"	"st_svcext_get_svc_info"	"Routines__st_svcext_get_svc_info"
+"Routine"	"st_svcext_get_sei_nal_info"	"Routines__st_svcext_get_sei_nal_info"
+"Routine"	"st_svcext_read_avc_info"	"Routines__st_svcext_read_avc_info"
+-->
+
+<P>
+Contents: <A href="#Top__Table___of___Contents">Table of Contents</A>, 
+<A href="#Top__Include">Include</A>, 
+<A href="#Top__Introduction">Introduction</A>, 
+<A href="#Top__Usage___model">Usage model</A>, 
+<A href="#Top__Types">Types</A>, 
+<A href="#Top__Defines">Defines</A>, 
+<A href="#Top__Routines">Routines</A>, 
+<A href="#Top__Index">Index</A>, 
+<!-- MASTER_INDEX --> <A HREF="index.html">Package List</A>
+</P>
+
+
+<!-- SEC_DESCRIPTION_START -->
+
+<a name="Top__Include"></a>
+<H2>1 &nbsp; Include</H2>
+<PRE class="ccode">
+#include "svcext.h" 
+</PRE>
+
+<a name="Top__Introduction"></a>
+<H2>2 &nbsp; Introduction</H2>
+<P>
+<A HREF="svcext.html#">svcext</A> library allows applications to efficiently parse SVC  
+NAL sequence and selectively process the NAL so that the output  
+bitstream is a subset of the input SVC stream. The output can  
+either be SVC/AVC stream. 
+</P>
+<P>
+Note that this library assumes that the NALs are all preceded  
+with the startcode 00 00 00 01. For some NALs which are  
+rewritten, some extra zeroes may be inserted at the beginning of  
+the NALs. The application is responsible for taking out the  
+startcode before forwarding to other destination like RTP sink. 
+</P>
+<UL>
+<LI>
+
+<a name="Top__Usage___model"></a>
+<H2>3 &nbsp; Usage model</H2>
+</LI>
+</UL>
+<P>
+Step 1 - Initialize an svcext instance per desired output stream. Configure the 
+instance with the desired spatial and temporal levels. 
+</P>
+<P>
+Step 2 - Pass the first 8 bytes of the source SVC NAL packet in sequence order  
+to <NOBR><A HREF="svcext.html#Routines__st_svcext_preview">st_svcext_preview</A>()</NOBR> function. 
+</P>
+<UL>
+<LI>
+Step 3 - Depending on the action suggested by the <NOBR><A HREF="svcext.html#Routines__st_svcext_preview">st_svcext_preview</A>()</NOBR> function. 
+</LI>
+<LI>
+if (action == SKIP)  
+</LI>
+<UL>
+<LI>
+Ignore that packet, goto Step 2. 
+</LI>
+</UL>
+<LI>
+if (action == COPY)  
+</LI>
+<UL>
+<LI>
+Copy the complete NAL packet to the target stream, goto Step 2. 
+</LI>
+</UL>
+<LI>
+if (action == PROCESS)  
+</LI>
+<UL>
+<LI>
+Use the <NOBR><A HREF="svcext.html#Routines__st_svcext_process">st_svcext_process</A>()</NOBR> to further process the complete NAL  
+</LI>
+</UL>
+</UL>
+<P>
+Step 4 - Check skip flag.  
+</P>
+<UL>
+<LI>
+If (skip == 1) 
+</LI>
+<UL>
+<LI>
+Dump the NAL  
+</LI>
+</UL>
+<LI>
+If (skip == 0) 
+</LI>
+<UL>
+<LI>
+Forward the modified NAL to the destination. Please check the size  
+returned which may be changed. 
+</LI>
+</UL>
+</UL>
+<P>
+Step 5 - Goto Step 2. 
+</P>
+<P>
+Note - For memory efficiency, it is recommended to prestore the first 8 bytes 
+of all NALs in a bitstream in a contiguous location. 
+</P>
+
+<a name="Top__Pseudo___Code"></a>
+<H3>3.1 &nbsp; Pseudo Code</H3>
+<PRE class="ccode">
+    #include "svcext.h" 
+ 
+    ... 
+    // This section of the code constructs the nal_directory for the SVC file  
+    // The nal directory contains the position of the full nal in the SVC  
+    // file as well as the first 8 bytes of the NAL packet (including 4 byte 
+    // start code) 
+    ... 
+ 
+    svcext_cfg.spatial_layer = 2; 
+    svcext_cfg.temporal_level = 2; 
+    svcext_cfg.avc            = 1;   // Output AVC compatible stream 
+    <A HREF="svcext.html#Routines__st_svcext_init">st_svcext_init</A>(&amp;extractor, &amp;svcext_cfg); 
+    if (extractor == NULL) exit(-1); 
+ 
+    // nal_dir_pointer points to a link list of entries, each containing the starting 
+    // location and size of nals within the svc file 
+    nal_dir_pointer = nal_dir_head; 
+    while (nal_dir_pointer) { 
+ 
+        <A HREF="svcext.html#Types__st_svcext_action_e">st_svcext_action_e</A> action; 
+        err = <A HREF="svcext.html#Routines__st_svcext_preview">st_svcext_preview</A>(extractor, nal_dir_pointer-&gt;first_bytes, &amp;action); 
+        if (err) { 
+            printf("<A HREF="svcext.html#Routines__st_svcext_preview">st_svcext_preview</A>(): error (%d) \n", err); 
+            goto finish; 
+        } 
+ 
+        if (action != <A HREF="svcext.html#Types__ST_SVCEXT_NAL_SKIP">ST_SVCEXT_NAL_SKIP</A>) { 
+            int nal_size_with_sc, skip = 0, nal_size; 
+            char *out_data; 
+ 
+                        // Get the size of the nal packet  
+            if (nal_dir_pointer-&gt;next != NULL) { 
+                nal_size_with_sc = (int)(nal_dir_pointer-&gt;next-&gt;sc_pos.__pos - nal_dir_pointer-&gt;sc_pos.__pos); 
+            } else { 
+                nal_size_with_sc = (int)(file_end_pos.__pos - nal_dir_pointer-&gt;sc_pos.__pos); 
+            } 
+ 
+            fsetpos(fin, &amp;(nal_dir_pointer-&gt;sc_pos)); 
+            fread(nal_buf, sizeof(char), nal_size_with_sc, fin); 
+            input_count += (nal_size_with_sc * 8); 
+            nal_size = nal_size_with_sc - 4;      // Subtract the 4 byte start code  
+            if (action == <A HREF="svcext.html#Types__ST_SVCEXT_NAL_PROCESS">ST_SVCEXT_NAL_PROCESS</A>) { 
+                err = <A HREF="svcext.html#Routines__st_svcext_process">st_svcext_process</A>(extractor, nal_buf, &amp;sc_offset, &amp;nal_size, &amp;skip);   
+                if (err) { 
+                    printf("<A HREF="svcext.html#Routines__st_svcext_process">st_svcext_process</A>(): error (%d) \n", err); 
+                    goto finish;  
+                } 
+            } 
+ 
+            out_data = nal_buf + sc_offset; 
+ 
+            // Write out the packet  
+            if (!skip) { 
+                fwrite(out_data, sizeof(char), nal_size + 4, fout); 
+                output_count += (nal_size + 4) * 8;  
+            } 
+        } 
+        nal_dir_pointer = nal_dir_pointer-&gt;next; 
+    } 
+</PRE>
+
+<!-- SEC_DESCRIPTION_CLOSE -->
+
+<!-- SEC_TYPES_START -->
+
+<a name="Top__Types"></a>
+<H2>4 &nbsp; Types</H2>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__st_svcext_error_e"></a>
+<PRE class="cdef">
+typedef enum st_svcext_error_tag {
+    <A name="Types__ST_SVCEXT_NO_ERROR">ST_SVCEXT_NO_ERROR</A>,
+    <A name="Types__ST_SVCEXT_OUT_OF_MEMORY">ST_SVCEXT_OUT_OF_MEMORY</A>,
+    <A name="Types__ST_SVCEXT_INVALID_POINTER">ST_SVCEXT_INVALID_POINTER</A>,
+    <A name="Types__ST_SVCEXT_UNSUPPORTED_SEI">ST_SVCEXT_UNSUPPORTED_SEI</A>,
+    <A name="Types__ST_SVCEXT_NO_STARTCODE">ST_SVCEXT_NO_STARTCODE</A>,
+    <A name="Types__ST_SVCEXT_UNSUPPORTED_NAL">ST_SVCEXT_UNSUPPORTED_NAL</A>,
+    <A name="Types__ST_SVCEXT_LAYERS_EXCEED_RANGE">ST_SVCEXT_LAYERS_EXCEED_RANGE</A>,
+    <A name="Types__ST_SVCEXT_MISSING_SEI">ST_SVCEXT_MISSING_SEI</A>,
+    <A name="Types__ST_SVCEXT_UNEXPECTED_PARAMSET">ST_SVCEXT_UNEXPECTED_PARAMSET</A>,
+    <A name="Types__ST_SVCEXT_MISSING_PARAMSET">ST_SVCEXT_MISSING_PARAMSET</A>,
+    <A name="Types__ST_SVCEXT_LAYER_NOT_FOUND">ST_SVCEXT_LAYER_NOT_FOUND</A>,
+    <A name="Types__ST_SVCEXT_FAIL">ST_SVCEXT_FAIL</A>,
+    <A name="Types__ST_SVCEXT_NOT_SUPPORTED">ST_SVCEXT_NOT_SUPPORTED</A>,
+    <A name="Types__ST_SVCEXT_BAD_VALUE">ST_SVCEXT_BAD_VALUE</A>,
+    <A name="Types__ST_SVCEXT_BAD_SLICE_SCALABLE_EXTENSION">ST_SVCEXT_BAD_SLICE_SCALABLE_EXTENSION</A>,
+    <A name="Types__ST_SVCEXT_BAD_PARSE_PREFIX_NAL">ST_SVCEXT_BAD_PARSE_PREFIX_NAL</A>,
+    <A name="Types__ST_SVCEXT_BAD_CHROMA_FORMAT_IDC">ST_SVCEXT_BAD_CHROMA_FORMAT_IDC</A>,
+    <A name="Types__ST_SVCEXT_BAD_SPS">ST_SVCEXT_BAD_SPS</A>,
+    <A name="Types__ST_SVCEXT_BAD_SSEI_TEMPORAL_LEVEL_NESTING_FLAG">ST_SVCEXT_BAD_SSEI_TEMPORAL_LEVEL_NESTING_FLAG</A>,
+    <A name="Types__ST_SVCEXT_BAD_SSEI_PRIORITY_LAYER_INFO_PRESENT_FLAG">ST_SVCEXT_BAD_SSEI_PRIORITY_LAYER_INFO_PRESENT_FLAG</A>,
+    <A name="Types__ST_SVCEXT_BAD_SSEI_SUB_PIC_LAYER_FLAG">ST_SVCEXT_BAD_SSEI_SUB_PIC_LAYER_FLAG</A>,
+    <A name="Types__ST_SVCEXT_BAD_SSEI_IROI_DIVISION_INFO_PRESENT_FLAG">ST_SVCEXT_BAD_SSEI_IROI_DIVISION_INFO_PRESENT_FLAG</A>,
+    <A name="Types__ST_SVCEXT_BAD_SSEI_PARAMETER_SETS_INFO_PRESENT_FLAG">ST_SVCEXT_BAD_SSEI_PARAMETER_SETS_INFO_PRESENT_FLAG</A>,
+    <A name="Types__ST_SVCEXT_BAD_SSEI_BITSTREAM_RESTRICTION_INFO_PRESENT_FLAG">ST_SVCEXT_BAD_SSEI_BITSTREAM_RESTRICTION_INFO_PRESENT_FLAG</A>,
+    <A name="Types__ST_SVCEXT_BAD_SSEI_QUALITY_ID">ST_SVCEXT_BAD_SSEI_QUALITY_ID</A>
+} <A HREF="svcext.html#Types__st_svcext_error_e">st_svcext_error_e</A>; 
+</PRE>
+<DIV CLASS="descr">
+<P>
+Error code used by the Stretch SVC Extractor. The negative codes are errors and 
+the positive ones are just informing the used of specific conditions. 
+</P>
+<UL>
+<LI>
+<STRONG>ST_SVCEX_NO_ERROR</STRONG> - Success. 
+</LI>
+<LI>
+<STRONG>ST_SVCEX_OUT_OF_MEMORY</STRONG> - Unable to allocate memory. 
+</LI>
+<LI>
+<STRONG>ST_SVCEX_INVALID_POINTER</STRONG> - Invalid pointer is passed to the API. 
+</LI>
+<LI>
+<A HREF="svcext.html#Types__ST_SVCEXT_UNSUPPORTED_SEI">ST_SVCEXT_UNSUPPORTED_SEI</A> - Only Scalable SEI messages are recognised. All other 
+messages are not recognised by the extraction process. 
+</LI>
+<LI>
+<STRONG>ST_SVCEX_NO_STARTCODE</STRONG> - Cannot find the 4 bytes 0x00 0x00 0x00 0x01 startcode. 
+</LI>
+<LI>
+<STRONG>ST_SVCEX_UNSUPPORTED_NAL</STRONG> - Nal type is not supported. 
+</LI>
+<LI>
+<STRONG>ST_SVCEX_LAYERS_EXCEED_RANGE</STRONG> - Number of spatial layers exceed supported range. 
+</LI>
+<LI>
+<STRONG>ST_SVCEX_MISSING_SEI</STRONG> - No SEI founded in the stream. 
+</LI>
+<LI>
+<STRONG>ST_SVCEX_UNEXPECTED_PARAMSET</STRONG> - Inconsistent paramset. 
+</LI>
+<LI>
+<STRONG>ST_SVCEX_MISSING_PARAMSET</STRONG> - No paramset for the layer is found. 
+</LI>
+<LI>
+<STRONG>ST_SVCEX_LAYER_NOT_FOUND</STRONG> - A spatial layer is missing. 
+</LI>
+<LI>
+<STRONG>ST_SVCEX_FAIL</STRONG> - General failure 
+</LI>
+<LI>
+<A HREF="svcext.html#Types__ST_SVCEXT_NOT_SUPPORTED">ST_SVCEXT_NOT_SUPPORTED</A> - The SVC extraction is not supported. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__st_svcext_config_t"></a>
+<PRE class="cdef">
+typedef struct st_svcext_config_s {
+    int avc;
+    int spatial_layer;
+    int temporal_level;
+    int debug;
+    int insert_dummy_frame;
+    int stream_eye_work_around;
+} <A HREF="svcext.html#Types__st_svcext_config_t">st_svcext_config_t</A>;
+</PRE>
+<DIV CLASS="descr">
+<P>
+Configuration data for an extractor instance. 
+</P>
+<P>
+<STRONG>Fields</STRONG>: 
+</P>
+<UL>
+<LI>
+<EM>debug</EM> - Enable debug info.  
+</LI>
+<LI>
+<EM>avc</EM> - This extractor handles AVC conversion 
+</LI>
+<LI>
+<EM>spatial_layer</EM> - Targeted spatial layer of the operating point. For  
+SVC, that means it contains all the data for the spatial layer specified  
+and below. For AVC, that means it contains all the data for that spatial layer.  
+</LI>
+<LI>
+<EM>temporal_level</EM> - Targeted temporal level of the operating point. For  
+SVC, that means it contains all the data for the temporal level specified and  
+below. For AVC, that means it contains all the data for that temporal level.  
+</LI>
+<LI>
+<EM>insert_dummy_frame</EM> - If the output is AVC mode, enable this flag force 
+the extractor to insert skip frames for frames taken out in temporal sublayer  
+streams. This allows the frame number in frames to be contiguous. This  
+is needed for some players to playback the sequence. [Note: frame number 
+gap is allowed in H.264 specification but some players may not have 
+handled it properly. The side effect of inserting dummy/skip frame is a little 
+higher bit rate and more processing cycles for the decoder. Another 
+impact is that the skip frames cannot be authenticated. The authentication  
+software should ignore those skip frames or the extractor should setup 
+to disable insert_dummy_frame for authentication to work]  
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__st_svcext_action_e"></a>
+<PRE class="cdef">
+typedef enum {
+    <A name="Types__ST_SVCEXT_NAL_SKIP">ST_SVCEXT_NAL_SKIP</A>,
+    <A name="Types__ST_SVCEXT_NAL_COPY">ST_SVCEXT_NAL_COPY</A>,
+    <A name="Types__ST_SVCEXT_NAL_PROCESS">ST_SVCEXT_NAL_PROCESS</A>
+} <A HREF="svcext.html#Types__st_svcext_action_e">st_svcext_action_e</A>; 
+</PRE>
+<DIV CLASS="descr">
+<P>
+Action to be taken indicated by st_svcext_process 
+</P>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__st_svcext_layer_info_t"></a>
+<PRE class="cdef">
+typedef struct {
+    int spatial_layer;
+    int temporal_level;
+    int frame_width;
+    int frame_height;
+    float frame_rate;
+} <A HREF="svcext.html#Types__st_svcext_layer_info_t">st_svcext_layer_info_t</A>;
+</PRE>
+<DIV CLASS="descr">
+<P>
+Information per svc spatial/temporal layer combination. 
+</P>
+<P>
+<STRONG>Fields</STRONG>: 
+</P>
+<UL>
+<LI>
+<EM>spatial_layer</EM> - Spatial layer id of the layer. 
+</LI>
+<LI>
+<EM>temporal_level</EM> - Temporal level id of the layer. 
+</LI>
+<LI>
+<EM>frame_width</EM> - Frame width represented by the layer. 
+</LI>
+<LI>
+<EM>frame_height</EM> - Frame height represented by the layer. 
+</LI>
+<LI>
+<EM>frame_rate</EM> - Frame rate represented by the layer. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__st_svcext_svc_info_t"></a>
+<PRE class="cdef">
+typedef struct {
+    int num_layers;
+    int num_spatial_layers;
+    int num_temporal_levels;
+    <A HREF="svcext.html#Types__st_svcext_layer_info_t">st_svcext_layer_info_t</A> layer_info[<A HREF="svcext.html#Defines__SVCEXT_MAX_SPATIAL_LAYERS">SVCEXT_MAX_SPATIAL_LAYERS</A> *<A HREF="svcext.html#Defines__SVCEXT_MAX_TEMPORAL_LEVELS">SVCEXT_MAX_TEMPORAL_LEVELS</A>];
+} <A HREF="svcext.html#Types__st_svcext_svc_info_t">st_svcext_svc_info_t</A>;
+</PRE>
+<DIV CLASS="descr">
+<P>
+Information regarding the svc stream. 
+</P>
+<P>
+<STRONG>Fields</STRONG>: 
+</P>
+<UL>
+<LI>
+<EM>num_layers</EM> - Total number of spatial/temporal layer combinations. 
+</LI>
+<LI>
+<EM>num_spatial_layers</EM> - Total number of spatial layers. 
+</LI>
+<LI>
+<EM>num_temporal_levels</EM> - Total number of temporal levels. 
+</LI>
+<LI>
+<EM>layer_info</EM> - An array of <A HREF="svcext.html#Types__st_svcext_layer_info_t">st_svcext_layer_info_t</A>. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__st_svcext_preview_info_t"></a>
+<PRE class="cdef">
+typedef struct {
+    <A HREF="svcext.html#Types__st_svcext_action_e">st_svcext_action_e</A> action;
+    int max_changed_bytes;
+} <A HREF="svcext.html#Types__st_svcext_preview_info_t">st_svcext_preview_info_t</A>;
+</PRE>
+<DIV CLASS="descr">
+<P>
+More detailed information given by the preview function about  
+what to do with the NAL packet  
+</P>
+<P>
+<STRONG>Fields</STRONG>: 
+</P>
+<UL>
+<LI>
+<EM>action</EM> - The action to be taken for the NAL packet 
+</LI>
+<LI>
+<EM>max_changed_bytes</EM> - Indicate the maximum number of bytes, starting from the  
+beginning of the buffer, that will be changed if the <NOBR><A HREF="svcext.html#Routines__st_svcext_process">st_svcext_process</A>()</NOBR>  
+function call is needed to further process/analyze the NAL packet.  
+0 - indicates that no byte will be changed (i.e. the <NOBR><A HREF="svcext.html#Routines__st_svcext_process">st_svcext_process</A>()</NOBR>  
+function will only determine if the NAL will be kept or not, but no 
+modification will be needed). 
+-1 - indicates that the full NAL need to be modified. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__st_svcext_avc_packet_info_t"></a>
+<PRE class="cdef">
+typedef struct {
+    int spatial_layer;
+    int temporal_level;
+    int is_IDR_NAL;
+    int is_SPS_NAL;
+    int is_PPS_NAL;
+} <A HREF="svcext.html#Types__st_svcext_avc_packet_info_t">st_svcext_avc_packet_info_t</A>;
+</PRE>
+<DIV CLASS="descr">
+<P>
+Information available for avc packets whose action is either <A HREF="svcext.html#Types__ST_SVCEXT_NAL_COPY">ST_SVCEXT_NAL_COPY</A> or 
+<A HREF="svcext.html#Types__ST_SVCEXT_NAL_PROCESS">ST_SVCEXT_NAL_PROCESS</A>. 
+</P>
+<P>
+<STRONG>Fields</STRONG>: 
+</P>
+<UL>
+<LI>
+<EM>spatial_layer</EM> - Spatial layer id to which the packet belongs in the svc stream. 
+</LI>
+<LI>
+<EM>temporal_level</EM> - Temporal level id to which the packet belongs in the svc stream. 
+</LI>
+<LI>
+<EM>is_IDR_NAL</EM> - 1 if packet contains an IDR nal, 0 otherwise. 
+</LI>
+<LI>
+<EM>is_SPS_NAL</EM> - 1 if packet contains an SPS nal, 0 otherwise. 
+</LI>
+<LI>
+<EM>is_PPS_NAL</EM> - 1 if packet contains a PPS nal, 0 otherwise. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Types__st_svcext_t"></a>
+<PRE class="cdef">
+typedef struct st_svcext_s *<A HREF="svcext.html#Types__st_svcext_t">st_svcext_t</A>; 
+</PRE>
+<DIV CLASS="descr">
+<P>
+The extractor context is stored in <A HREF="svcext.html#Types__st_svcext_t">st_svcext_t</A>.  
+</P>
+</DIV>
+
+</DIV>
+
+<!-- SEC_TYPES_CLOSE -->
+
+<!-- SEC_DEFINES_START -->
+
+<a name="Top__Defines"></a>
+<H2>5 &nbsp; Defines</H2>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Defines__EXTERN"></a>
+<PRE class="cdef">
+#define <A HREF="svcext.html#Defines__EXTERN">EXTERN</A>
+</PRE>
+<DIV CLASS="descr">
+<P>
+extern <EM>C</EM> for C++ build 
+</P>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Defines__SVCEXT_MAX_SPATIAL_LAYERS"></a>
+<PRE class="cdef">
+#define <A HREF="svcext.html#Defines__SVCEXT_MAX_SPATIAL_LAYERS">SVCEXT_MAX_SPATIAL_LAYERS</A>
+</PRE>
+<DIV CLASS="descr">
+<P>
+Maximum number of spatial layers 
+</P>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Defines__SVCEXT_MAX_TEMPORAL_LEVELS"></a>
+<PRE class="cdef">
+#define <A HREF="svcext.html#Defines__SVCEXT_MAX_TEMPORAL_LEVELS">SVCEXT_MAX_TEMPORAL_LEVELS</A>
+</PRE>
+<DIV CLASS="descr">
+<P>
+Maximum number of temporal levels 
+</P>
+</DIV>
+
+</DIV>
+
+<!-- SEC_DEFINES_CLOSE -->
+
+<!-- SEC_ROUTINES_START -->
+
+<a name="Top__Routines"></a>
+<H2>6 &nbsp; Routines</H2>
+
+<a name="Routines__Miscellaneous"></a>
+<H3>6.1 &nbsp; Miscellaneous</H3>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__st_svcext_init"></a>
+<PRE class="cdef">
+<A HREF="svcext.html#Types__st_svcext_error_e">st_svcext_error_e</A> <A HREF="svcext.html#Routines__st_svcext_init">st_svcext_init</A> (<A HREF="svcext.html#Types__st_svcext_t">st_svcext_t</A>        * handle,
+                                  <A HREF="svcext.html#Types__st_svcext_config_t">st_svcext_config_t</A> * config);
+</PRE>
+<DIV CLASS="descr">
+<P>
+Create an extractor instance. 
+</P>
+<P>
+<STRONG>Arguments</STRONG>: 
+</P>
+<UL>
+<LI>
+<EM>handle</EM> - Configured extractor instance. 
+</LI>
+<LI>
+<EM>config</EM> - A pointer to the <A HREF="svcext.html#Types__st_svcext_config_t">st_svcext_config_t</A> data structure describing 
+the current SVC extreactor configuration. 
+</LI>
+</UL>
+<P>
+<STRONG>Returns</STRONG>:  
+</P>
+<UL>
+<LI>
+<A HREF="svcext.html#Types__ST_SVCEXT_NO_ERROR">ST_SVCEXT_NO_ERROR</A> when successful, error messages otherwise. 
+</LI>
+</UL>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__st_svcext_delete"></a>
+<PRE class="cdef">
+<A HREF="svcext.html#Types__st_svcext_error_e">st_svcext_error_e</A> <A HREF="svcext.html#Routines__st_svcext_delete">st_svcext_delete</A> (<A HREF="svcext.html#Types__st_svcext_t">st_svcext_t</A> handle);
+</PRE>
+<DIV CLASS="descr">
+<P>
+Deletes an Extractor Instance. This does not delete all the channel instances 
+attached to the extractor.  
+</P>
+<P>
+<STRONG>Arguments</STRONG>: 
+</P>
+<UL>
+<LI>
+<EM>handle</EM> - Configured extractor instance. 
+</LI>
+</UL>
+<P>
+<STRONG>Returns</STRONG>: None 
+</P>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__st_svcext_preview"></a>
+<PRE class="cdef">
+<A HREF="svcext.html#Types__st_svcext_error_e">st_svcext_error_e</A> <A HREF="svcext.html#Routines__st_svcext_preview">st_svcext_preview</A> (<A HREF="svcext.html#Types__st_svcext_t">st_svcext_t</A>                handle,
+                                     char                     * nal_part,
+                                     <A HREF="svcext.html#Types__st_svcext_preview_info_t">st_svcext_preview_info_t</A> * info);
+</PRE>
+<DIV CLASS="descr">
+<P>
+SVC NAL preselection step 
+</P>
+<P>
+This function allows the application to pass only the first 8 bytes of NAL units 
+to the extractor library. The NAL units come from a source SVC stream and should  
+be passed to this function in sequential order. With the function, the application 
+will be able to determine the subsequent action associated with the NAL. It  
+depends on following factors: Desired spatial and temporal level, AVC/SVC mode   
+and the current state of the extractor. Before an SEI is encountered, all 
+NAL units will be dropped. 
+</P>
+<P>
+<STRONG>Arguments</STRONG>: 
+</P>
+<UL>
+<LI>
+<EM>handle</EM> - a single channel SVC extractor instance. 
+</LI>
+<LI>
+<EM>nal_part</EM>    - Pointer to a memory location storing the first 8 bytes of the NAL unit 
+</LI>
+<LI>
+<EM>info</EM>   - Returns a structure which describes the action that should be  
+taken for the NAL. See <A HREF="svcext.html#Types__st_svcext_preview_info_t">st_svcext_preview_info_t</A> for more details. 
+</LI>
+</UL>
+<P>
+<STRONG>Returns</STRONG>: <A HREF="svcext.html#Types__ST_SVCEXT_NO_ERROR">ST_SVCEXT_NO_ERROR</A> when successful, error messages otherwise. 
+</P>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__st_svcext_process"></a>
+<PRE class="cdef">
+<A HREF="svcext.html#Types__st_svcext_error_e">st_svcext_error_e</A> <A HREF="svcext.html#Routines__st_svcext_process">st_svcext_process</A> (<A HREF="svcext.html#Types__st_svcext_t">st_svcext_t</A>   extractor,
+                                     char        * nal,
+                                     int         * sc_offset,
+                                     int         * size,
+                                     int         * skip);
+</PRE>
+<DIV CLASS="descr">
+<P>
+SVC NAL modification phase.  
+</P>
+<P>
+This function modifies/parse the NAL content in place. This function should  
+only be called if the <NOBR><A HREF="svcext.html#Routines__st_svcext_preview">st_svcext_preview</A>()</NOBR> function require PROCESS  
+action. This function needs to be called before the next <NOBR><A HREF="svcext.html#Routines__st_svcext_preview">st_svcext_preview</A>()</NOBR>  
+function. Note: After this, the start code location of the NAL may  
+be shifted by at most 3 bytes. The sc_offset parameter contains the offset  
+of the 0x00000001 startcode from the nal pointer. If it is not shifted,  
+it will be kept as 0. There is a skip flag too after this function is called.  
+If skip is set, that means the NAL is not needed for the target bitstream. 
+</P>
+<P>
+<STRONG>Arguments</STRONG>: 
+</P>
+<UL>
+<LI>
+<EM>extractor</EM> - a single channel SVC extractor instance. 
+</LI>
+<LI>
+<EM>nal</EM>    - Pointer to a memory location storing the NAL unit. 
+Note that this function looks for the 00 00 00 01 startcode to locate the  
+NAL header. After this function is done, the startcode location may change.  
+The user application can locate the NAL header by checking the 00 00 00 01  
+startcode.  
+</LI>
+<LI>
+<EM>sc_offset</EM> - The offset of the 0x00000001 startcode from the nal pointer. 
+The function automatically detects the offset of the startcode and returns 
+it to the caller application. 
+</LI>
+<LI>
+<EM>size</EM>   - User applications provides the size of the NAL (nal header +  
+nal payload, not including the 00 00 00 01 startcode. If the NAL size  
+(nal header + nal payload) is changed, the new size will be passed through  
+this variable too. Note again the returned size does not include the  
+startcode bytes. 
+</LI>
+<LI>
+<EM>skip</EM>   - Tells the user application whether to skip this nal or not 
+</LI>
+</UL>
+<P>
+<STRONG>Returns</STRONG>: <A HREF="svcext.html#Types__ST_SVCEXT_NO_ERROR">ST_SVCEXT_NO_ERROR</A> when successful, error messages otherwise. 
+</P>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__st_svcext_get_svc_info"></a>
+<PRE class="cdef">
+<A HREF="svcext.html#Types__st_svcext_error_e">st_svcext_error_e</A> <A HREF="svcext.html#Routines__st_svcext_get_svc_info">st_svcext_get_svc_info</A> (<A HREF="svcext.html#Types__st_svcext_t">st_svcext_t</A>            handle,
+                                          <A HREF="svcext.html#Types__st_svcext_svc_info_t">st_svcext_svc_info_t</A> * info);
+</PRE>
+<DIV CLASS="descr">
+<P>
+Utility function to retrieve the svc stream information that is being processed 
+by the extractor. This information is only available after the SEI nal is  
+processed by the <NOBR><A HREF="svcext.html#Routines__st_svcext_process">st_svcext_process</A>()</NOBR> function. 
+</P>
+<P>
+<STRONG>Arguments</STRONG>: 
+</P>
+<UL>
+<LI>
+<EM>handle</EM> - a single channel SVC extractor instance. 
+</LI>
+<LI>
+<EM>info</EM> - Returns the svc stream info (num layers, per layer info) 
+</LI>
+</UL>
+<P>
+<STRONG>Returns</STRONG>: <A HREF="svcext.html#Types__ST_SVCEXT_NO_ERROR">ST_SVCEXT_NO_ERROR</A> when successful, error messages otherwise. 
+</P>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__st_svcext_get_sei_nal_info"></a>
+<PRE class="cdef">
+<A HREF="svcext.html#Types__st_svcext_error_e">st_svcext_error_e</A> <A HREF="svcext.html#Routines__st_svcext_get_sei_nal_info">st_svcext_get_sei_nal_info</A> (char                 * nal,
+                                              int                    size,
+                                              <A HREF="svcext.html#Types__st_svcext_svc_info_t">st_svcext_svc_info_t</A> * info);
+</PRE>
+<DIV CLASS="descr">
+<P>
+Utility function to retrieve the svc stream information from the SEI nal 
+buffer data. This function gets the svc information without needing to 
+initialize an extractor instance. It is useful for previewing the svc stream 
+before setting up an extractor. 
+</P>
+<P>
+<STRONG>Arguments</STRONG>: 
+</P>
+<UL>
+<LI>
+<EM>nal</EM> - Pointer to the full SEI nal buffer. The buffer should include 
+the four byte 0x00000001 start code.         
+</LI>
+<LI>
+<EM>size</EM> - The size of the nal buffer, excluding the start code. 
+</LI>
+<LI>
+<EM>info</EM> - Returns the svc stream info (num layers, per layer info) 
+</LI>
+</UL>
+<P>
+<STRONG>Returns</STRONG>: <A HREF="svcext.html#Types__ST_SVCEXT_NO_ERROR">ST_SVCEXT_NO_ERROR</A> when successful, error messages otherwise. 
+</P>
+</DIV>
+
+</DIV>
+<DIV onMouseover="this.style.backgroundColor='rgb(235, 235, 235)'"  onMouseout="this.style.backgroundColor='rgb(220, 220, 220)'" >
+<a name="Routines__st_svcext_read_avc_info"></a>
+<PRE class="cdef">
+<A HREF="svcext.html#Types__st_svcext_error_e">st_svcext_error_e</A> <A HREF="svcext.html#Routines__st_svcext_read_avc_info">st_svcext_read_avc_info</A> (<A HREF="svcext.html#Types__st_svcext_t">st_svcext_t</A>                   extractor,
+                                           <A HREF="svcext.html#Types__st_svcext_avc_packet_info_t">st_svcext_avc_packet_info_t</A> * info);
+</PRE>
+<DIV CLASS="descr">
+<P>
+Utility function to retrieve information about avc packets extracted from the svc stream. This information is 
+only valid when the packet is to be included in the stream - either copied or processed and not skipped. This  
+function returns well-defined data only if it is called after *st_svcext_preview*, and if the current packet  
+requires processing, *st_svcext_process*. 
+</P>
+<P>
+Dummy frames' info structures show the temporal layers of the frames they replace. 
+</P>
+<P>
+<STRONG>Arguments</STRONG>: 
+</P>
+<UL>
+<LI>
+<EM>extractor</EM> - Extractor handle.         
+</LI>
+<LI>
+<EM>info</EM> - Pointer to information structure. 
+</LI>
+</UL>
+<P>
+<STRONG>Returns</STRONG>: <A HREF="svcext.html#Types__ST_SVCEXT_NO_ERROR">ST_SVCEXT_NO_ERROR</A> when successful, an <A HREF="svcext.html#Types__ST_SVCEXT_INVALID_POINTER">ST_SVCEXT_INVALID_POINTER</A> if a pointer is 
+invalid, or <A HREF="svcext.html#Types__ST_SVCEXT_FAIL">ST_SVCEXT_FAIL</A> if the extractor is not configured for avc. 
+</P>
+</DIV>
+
+</DIV>
+
+<!-- SEC_ROUTINES_CLOSE -->
+
+<!-- SEC_FULL_TOC_START -->
+
+<a name="Top__Table___of___Contents"></a>
+<H2>7 &nbsp; Table of Contents</H2>
+<P align="left">
+<A href="#Top__Include">1 &nbsp; Include</A>
+<BR>
+<A href="#Top__Introduction">2 &nbsp; Introduction</A>
+<BR>
+<A href="#Top__Usage___model">3 &nbsp; Usage model</A>
+<BR>
+&nbsp; &nbsp; &nbsp; <A href="#Top__Pseudo___Code">3.1 &nbsp; Pseudo Code</A>
+<BR>
+<A href="#Top__Types">4 &nbsp; Types</A>
+<BR>
+<A href="#Top__Defines">5 &nbsp; Defines</A>
+<BR>
+<A href="#Top__Routines">6 &nbsp; Routines</A>
+<BR>
+&nbsp; &nbsp; &nbsp; <A href="#Routines__Miscellaneous">6.1 &nbsp; Miscellaneous</A>
+<BR>
+<A href="#Top__Table___of___Contents">7 &nbsp; Table of Contents</A>
+<BR>
+<A href="#Top__Index">8 &nbsp; Index</A>
+</P>
+
+
+<!-- SEC_FULL_TOC_CLOSE -->
+
+<!-- GLOBAL_INDEX -->
+
+<!-- SEC_INDEX_START -->
+
+<a name="Top__Index"></a>
+<H2>8 &nbsp; Index</H2>
+<P>
+This index contains the following elements: 
+defines, routines, types, enum type elements (EnumElt),
+shell commands (ShCom), shell parameters (ShParam), and grammars.
+</P>
+<P>
+<TABLE class="index" COLS=7 BORDER=0 WIDTH="100%">
+<TR>
+<TD width="100*">Element</TD>
+<TD width="30*">Type</TD>
+<TD width="10*" align="right">Section</TD>
+<TD width=10></TD>
+<TD width="100*">Element</TD>
+<TD width="30*">Type</TD>
+<TD width="10*" align="right">Section</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Defines__EXTERN">EXTERN</A>
+</NOBR></TD>
+<TD width="30*">Define</TD>
+<TD width="10*" align="right">
+<A href="#Top__Defines">5</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__st_svcext_layer_info_t">st_svcext_layer_info_t</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__st_svcext_action_e">st_svcext_action_e</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_LAYER_NOT_FOUND">ST_SVCEXT_LAYER_NOT_FOUND</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__st_svcext_avc_packet_info_t">st_svcext_avc_packet_info_t</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_LAYERS_EXCEED_RANGE">ST_SVCEXT_LAYERS_EXCEED_RANGE</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_BAD_CHROMA_FORMAT_IDC">ST_SVCEXT_BAD_CHROMA_FORMAT_IDC</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_MISSING_PARAMSET">ST_SVCEXT_MISSING_PARAMSET</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_BAD_PARSE_PREFIX_NAL">ST_SVCEXT_BAD_PARSE_PREFIX_NAL</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_MISSING_SEI">ST_SVCEXT_MISSING_SEI</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_BAD_SLICE_SCALABLE_EXTENSION">ST_SVCEXT_BAD_SLICE_SCALABLE_EXTENSION</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_NAL_COPY">ST_SVCEXT_NAL_COPY</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_BAD_SPS">ST_SVCEXT_BAD_SPS</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_NAL_PROCESS">ST_SVCEXT_NAL_PROCESS</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_BAD_SSEI_BITSTREAM_RESTRICTION_INFO_PRESENT_FLAG">ST_SVCEXT_BAD_SSEI_BITSTREAM_RESTRICTION_INFO_PRESENT_FLAG</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_NAL_SKIP">ST_SVCEXT_NAL_SKIP</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_BAD_SSEI_IROI_DIVISION_INFO_PRESENT_FLAG">ST_SVCEXT_BAD_SSEI_IROI_DIVISION_INFO_PRESENT_FLAG</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_NO_ERROR">ST_SVCEXT_NO_ERROR</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_BAD_SSEI_PARAMETER_SETS_INFO_PRESENT_FLAG">ST_SVCEXT_BAD_SSEI_PARAMETER_SETS_INFO_PRESENT_FLAG</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_NO_STARTCODE">ST_SVCEXT_NO_STARTCODE</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_BAD_SSEI_PRIORITY_LAYER_INFO_PRESENT_FLAG">ST_SVCEXT_BAD_SSEI_PRIORITY_LAYER_INFO_PRESENT_FLAG</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_NOT_SUPPORTED">ST_SVCEXT_NOT_SUPPORTED</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_BAD_SSEI_QUALITY_ID">ST_SVCEXT_BAD_SSEI_QUALITY_ID</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_OUT_OF_MEMORY">ST_SVCEXT_OUT_OF_MEMORY</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_BAD_SSEI_SUB_PIC_LAYER_FLAG">ST_SVCEXT_BAD_SSEI_SUB_PIC_LAYER_FLAG</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__st_svcext_preview"><A HREF="svcext.html#Routines__st_svcext_preview">st_svcext_preview</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__Miscellaneous">6.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_BAD_SSEI_TEMPORAL_LEVEL_NESTING_FLAG">ST_SVCEXT_BAD_SSEI_TEMPORAL_LEVEL_NESTING_FLAG</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__st_svcext_preview_info_t">st_svcext_preview_info_t</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_BAD_VALUE">ST_SVCEXT_BAD_VALUE</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__st_svcext_process"><A HREF="svcext.html#Routines__st_svcext_process">st_svcext_process</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__Miscellaneous">6.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__st_svcext_config_t">st_svcext_config_t</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A href="#Routines__st_svcext_read_avc_info"><A HREF="svcext.html#Routines__st_svcext_read_avc_info">st_svcext_read_avc_info</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__Miscellaneous">6.1</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A href="#Routines__st_svcext_delete"><A HREF="svcext.html#Routines__st_svcext_delete">st_svcext_delete</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__Miscellaneous">6.1</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__st_svcext_svc_info_t">st_svcext_svc_info_t</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__st_svcext_error_e">st_svcext_error_e</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__st_svcext_t">st_svcext_t</A>
+</NOBR></TD>
+<TD width="30*">Typedef</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_FAIL">ST_SVCEXT_FAIL</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_UNEXPECTED_PARAMSET">ST_SVCEXT_UNEXPECTED_PARAMSET</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A href="#Routines__st_svcext_get_sei_nal_info"><A HREF="svcext.html#Routines__st_svcext_get_sei_nal_info">st_svcext_get_sei_nal_info</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__Miscellaneous">6.1</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_UNSUPPORTED_NAL">ST_SVCEXT_UNSUPPORTED_NAL</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A href="#Routines__st_svcext_get_svc_info"><A HREF="svcext.html#Routines__st_svcext_get_svc_info">st_svcext_get_svc_info</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__Miscellaneous">6.1</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_UNSUPPORTED_SEI">ST_SVCEXT_UNSUPPORTED_SEI</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A href="#Routines__st_svcext_init"><A HREF="svcext.html#Routines__st_svcext_init">st_svcext_init</A>()</A>
+</NOBR></TD>
+<TD width="30*">Routine</TD>
+<TD width="10*" align="right">
+<A href="#Routines__Miscellaneous">6.1</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Defines__SVCEXT_MAX_SPATIAL_LAYERS">SVCEXT_MAX_SPATIAL_LAYERS</A>
+</NOBR></TD>
+<TD width="30*">Define</TD>
+<TD width="10*" align="right">
+<A href="#Top__Defines">5</A>
+</TD>
+</TR>
+<TR>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Types__ST_SVCEXT_INVALID_POINTER">ST_SVCEXT_INVALID_POINTER</A>
+</NOBR></TD>
+<TD width="30*">EnumElt</TD>
+<TD width="10*" align="right">
+<A href="#Top__Types">4</A>
+</TD>
+<TD width="10"></TD>
+<TD  width="100*">
+<NOBR><A HREF="svcext.html#Defines__SVCEXT_MAX_TEMPORAL_LEVELS">SVCEXT_MAX_TEMPORAL_LEVELS</A>
+</NOBR></TD>
+<TD width="30*">Define</TD>
+<TD width="10*" align="right">
+<A href="#Top__Defines">5</A>
+</TD>
+</TR>
+</TABLE>
+</P>
+
+
+<!-- SEC_INDEX_CLOSE -->
+<P>
+<HR>
+</P>
+<P align="left">
+Package last modified on: May 15, 2013 at 02:00 UTC.<BR>
+</P>
+
+</BODY>
+</HTML>

@@ -1,0 +1,47 @@
+Troubleshooting tips
+--------------------
+
+- Depending on which board you have purchased, it may have a disk
+  drive connector on it. If it does, this must be connected from
+  the power supply. The board draws its power from this connector
+  and will not boot if the connector is not hooked up.
+
+- Make sure that the DIP switches on the board are set correctly.
+  See the Quick Start Guide for the correct settings.
+
+- If the dvrcp.exe demo application cannot find your board, go
+  to the Windows Device Manager and make sure that Windows has
+  configured the board properly. Right-click the "My Computer"
+  icon on your desktop, select "Manage", then select "Device
+  Manager". If the Stretch S6 DVR board is not listed in the
+  device tree, right-click and select "Scan for hardware changes".
+  If this still does not show the board, try rebooting the PC.
+
+- If the board is still not visible in the Device Manager, make
+  sure that the board is booting properly by connecting the UART
+  cable from the debug module to a PC. When the PC with the board
+  installed is powered on, you should see several lines of text 
+  printed out by the board as it boots. Make sure these appear and
+  that there are no error messages. If you see any error messages,
+  contact your Stretch representative for assistance.
+
+- If the board is visible in the Device Manager and is reported
+  as working properly, but is still not detected by dvrcp.exe,
+  try disabling the board (right-click on the board in Device
+  Manager and select "Disable") and then re-enabling it.
+
+- Run the board diagnostic program provided with the kit. See the
+  Quick Start Guide for details on how to do this.
+
+- Make sure that you are not trying to load the diagnostic ROM file
+  to the board. The diagnostic ROM file can be used only by the
+  command line diagnostic tool.
+
+- Make sure you are not trying to load an incorrect version of the
+  firmware to  the board through the demo application.
+
+- Make sure that the boot loader, PCI driver, ROM file, and dvrcp.exe
+  are all from the same release.
+
+-End-
+

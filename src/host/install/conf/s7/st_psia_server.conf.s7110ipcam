@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StretchPSIAServer version="1.1">
+  <ServerSettings version="1.2">
+    <pswdFileName>st_passwords</pswdFileName>
+    <FirmwareFileName>s7110ipcam_dvrfw.rom</FirmwareFileName>
+    <!-- PSIA server debugging, 0 - Disable, or Ored combination of the following: -->
+    <!-- General Server trace          = 1 -->
+    <!-- The PSIA video category       = 2 -->
+    <!-- The PSIA streaming category   = 4 -->
+    <!-- The PSIA video input category = 8 -->
+    <!-- The PSIA security category    = 16 -->
+    <!-- The PSIA system category      = 32 -->
+    <!-- A/V frame trace i,e, drops    = 64 (Warning - This flag uses lots of log file space)-->
+    <!-- A/V frame queue trace i,e, drops = 128 (Warning - This flag uses lots of log file space)-->
+    <debugServerFlags>0</debugServerFlags>
+
+    <!-- 0 - disable SDK debugging, 1 to have SDK only debugging, 2 to also have A/V frame tracing -->
+    <debugSdkFlags>0</debugSdkFlags>
+
+    <!-- RTSP server debugging, 0 - Disable, or one of the following following: -->
+    <!-- Enable Error logging                     = 1        -->
+    <!-- Enable Error+Warning logging             = 2        -->
+    <!-- Enable Error+Warning+Information logging = 3        -->
+    <debugRTSPServerFlags>0</debugRTSPServerFlags>
+
+    <!-- The size of RTSP output buffer in Kilobytes -->
+    <rtspMaxOutPutPacketSize>1024</rtspMaxOutPutPacketSize>
+
+    <!-- The stretch RTSP server rtspPortNum -->
+    <!-- Live555 server uses rtspAtlPortNum  -->
+    <rtspPortNum>9554</rtspPortNum>
+    <rtspAltPortNum>8554</rtspAltPortNum>
+    <videoStreamPerCamera>4</videoStreamPerCamera>
+
+    <!-- Specify the current video standard of the SMO -->
+    <!-- Not all the video standard are supported by the camera -->
+    <!-- default                  = 0     -->
+    <!-- SDVR_VIDEO_STD_D1_PAL    = 1     -->
+    <!-- SDVR_VIDEO_STD_D1_NTSC   = 2     -->
+    <!-- SDVR_VIDEO_STD_CIF_PAL   = 4     -->
+    <!-- SDVR_VIDEO_STD_CIF_NTSC  = 8     -->
+    <!-- SDVR_VIDEO_STD_2CIF_PAL  = 16    -->
+    <!-- SDVR_VIDEO_STD_2CIF_NTSC = 32    -->
+    <!-- SDVR_VIDEO_STD_4CIF_PAL  = 64    -->
+    <!-- SDVR_VIDEO_STD_4CIF_NTSC = 128   -->
+    <!-- SDVR_VIDEO_STD_1080P30   = 256   -->
+    <!-- SDVR_VIDEO_STD_1080P25   = 512   -->
+    <!-- SDVR_VIDEO_STD_720P60    = 1024  -->
+    <!-- SDVR_VIDEO_STD_720P50    = 2048  -->
+    <!-- SDVR_VIDEO_STD_1080I60   = 4096  -->
+    <!-- SDVR_VIDEO_STD_1080I50   = 8192  -->
+    <!-- SDVR_VIDEO_STD_1080P60   = 16384 -->
+    <!-- SDVR_VIDEO_STD_1080P50   = 32768 -->
+    <!-- SDVR_VIDEO_STD_720P30    = 65536 -->
+    <!-- SDVR_VIDEO_STD_720P25    = 131072-->
+
+    <smoVideoStandard>0</smoVideoStandard>
+  </ServerSettings>
+
+  <SDKSettings version="1.0">
+    <SystemDefBuffers version="1.0" >
+      <maxBufCount>0</maxBufCount>
+      <encVideoBufCount>10</encVideoBufCount>
+      <encAudioBufCount>5</encAudioBufCount>
+      <!-- See below comment on rawVideoStreamCount -->
+      <rawVideoBufCount>2</rawVideoBufCount>
+      <rawAudioBufCount>0</rawAudioBufCount>
+      <motionBufCount>0</motionBufCount>
+      <!-- Set to one (1) if you plan to send any raw command to the IPP -->
+      <!-- that result in returning extra response data. Otherwise, set  -->
+      <!-- to zero (0) to save memory space.                             -->
+      <cmdResponseBufCount>1</cmdResponseBufCount>
+      <!-- The valid range is from 3 to 8. The recommended values are: -->
+      <!-- 3 for best latency                                          -->
+      <!-- 7 for best performance                                      -->
+      <!-- Set to zero (0) to use the default value.                   -->
+      <dataPortBufCount>0</dataPortBufCount>
+    </SystemDefBuffers>
+
+    <!-- enableH264sce should be false for S7 and true for S6 -->
+    <enableH264sce>false</enableH264sce>
+    <enableAuthKey>false</enableAuthKey>
+    <!-- Currently we can have 0 - 1 raw video stream. In general   -->
+    <!-- for IP-Camera this should set to zero (0), but for testing -->
+    <!-- you can set it to one (1).                                 -->
+    <!-- NOTE: If you set rawVideoStreamCount to none-zero value    -->
+    <!--       make sure to set rawVideoBufCount 2. Otherwise set   -->
+    <!--       rawVideoBufCount to zero (0) to save memory.         -->
+    <rawVideoStreamCount>1</rawVideoStreamCount>
+    <sctTimeout>5</sctTimeout>
+
+    <Audio version="1.0">
+      <audioCodec opt="none, G711">G711</audioCodec>
+      <audioRate opt="8KHZ, 16KHZ">8KHZ</audioRate>
+    </Audio>
+
+    <!-- Specify the camera's video standard                            -->
+    <!-- This is the video standard that is passed to the board connect.-->
+    <!-- *** You must know what are the supported video standards       -->
+    <!-- *** before setting any of the SD or HD video standards.        -->
+    <!-- *** If the specified video standard is not supported, PSIA     -->
+    <!-- *** server tries to select one of the supported ones.          -->
+    <!-- *** Nevertheless a wrong video standard could cause the server -->
+    <!-- *** to terminate.                                              -->
+    <!-- NOTE: DO NOT USE SD OR HD VIDEO STANDARD IF THE CAMERA DOES NOT-->
+    <!--       SUPPORT IT. ALSO ONLY SET ONE OF THE VIDEO STANDARDS.    -->
+    <!-- NOTE2: You may need to change the video frame dimensions and   -->
+    <!--        frame rate to much the selected video standard.         -->
+    <!-- Remarks: The PSIA server defaults to 1080P30 and 720P60 or     -->
+    <!--          1080P25 and 720P50 if no video standard is specified  -->
+    <!--          and these video standards are supported.              -->
+    <!-- Possible supported SD video standards are: -->
+    <!--- NONE                                      -->
+    <!--- D1_PAL, 4CIF_PAL, 2CIF_PAL, CIF_PAL       -->
+    <!--- D1_NTSC, 4CIF_NTSC, 2CIF_NTSC, CIF_NTSC   -->
+    <sdVideoStandard>NONE</sdVideoStandard>
+
+    <!-- Possible supported SD video standards are: -->
+    <!--- NONE                                      -->
+    <!--- 1080P60, 1080P50, 1080P30, 1080P25        -->
+    <!--- 1080I60, 1080I50                          -->
+    <!--- 720P60, 720P50, 720P30, 720P25            -->
+    <hdVideoStandard>NONE</hdVideoStandard>
+  </SDKSettings>
+
+</StretchPSIAServer>
+

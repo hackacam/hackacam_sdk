@@ -1,0 +1,48 @@
+#!/bin/sh
+
+echo IP Camera Diag Script
+cd /usr/local/stretch/bin/
+./load
+./diag/sdvr_diag 0 diag/ipcam_diag.rom
+
+# Ping test for ethernet connectivity
+GW=`route | awk '/default/ {print $2}'`
+echo Ping test: trying $GW...
+ping -c 1 -W 3 -q $GW >/dev/null
+RETVAL=$?
+if [ $RETVAL -eq 0 ]; then
+    echo Ping test passed!
+else
+    echo ERROR: Ping test FAILED
+fi
+
+# Mount flash test
+umount /mnt/flash
+flash_unlock /dev/mtd4
+mount -t jffs2 /dev/mtdblock4 /mnt/flash || {
+    echo "INFO: Mounting flash on /mnt/flash failed, trying erasing..."
+    flash_unlock /dev/mtd4
+    flash_eraseall /dev/mtd4
+    mount -t jffs2 /dev/mtdblock4 /mnt/flash || { 
+        echo "ERROR: Mounting flash failed, giving up..."
+        echo "ERROR: Failed mounting flash."
+        exit 1
+    }
+}
+TESTFILE=/mnt/flash/diag.testfile
+touch $TESTFILE
+sync
+umount /mnt/flash
+mount -t jffs2 /dev/mtdblock4 /mnt/flash || {
+    echo "ERROR: Failed mounting flash."
+    exit 2
+}
+if [ -e $TESTFILE ]; then
+    rm $TESTFILE
+    sync
+    echo "Flash test passed!"
+else
+    echo ERROR: /dev/mtdblock4 not writeable
+    exit 3
+fi
+

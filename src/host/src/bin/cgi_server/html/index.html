@@ -1,0 +1,126 @@
+<!DOCTYPE HTML>
+<HTML>
+  <head>    
+    <style type="text/css">
+      div.ui-slider-switch .ui-slider-handle { margin: 1px 0 0 -15px; }
+      .ui-block-b .ui-slider-switch { width: 8em }
+      .ui-block-a, .ui-block-b, .ui-block-c { text-align : center; vertical-align: middle; height:64px;}
+      <!-- .ui-block-a, .ui-block-b, .ui-block-c { text-align : center; top: 50%;} -->
+      .ui-li { 
+      height: 64px;
+      <!-- margin-bottom:0px; -->
+      } 
+      img {max-width:100%}
+    </style>
+    <meta charset="UTF-8">
+    <title>Camera Configurator</title>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta name="viewport" content="initial-scale=1, maximum-scale = 1.0">
+    <link rel="stylesheet" href="jquery.mobile.structure-1.1.1.min.css" />
+    <link rel="stylesheet" href="jquery.mobile-1.1.1.min.css" />
+    <link rel="stylesheet" href="camera_control.css" />
+    <link rel="stylesheet" type="text/css" href="jqm-datebox.min.css" /> 
+    <link rel="stylesheet" href="jquery.Jcrop.min.css" type="text/css" />
+
+    <script src="jquery-1.8.1.min.js"></script>     
+    <script src="jquery.mobile-1.1.1.min.js"></script>
+    <script type="text/javascript" src="jqm-datebox.core.min.js"></script>
+    <script type="text/javascript" src="jqm-datebox.mode.calbox.min.js"></script>
+    <script src="jquery.Jcrop.min.js"></script>
+
+  </head>
+  <body>                                                                  
+    <!-- we will add our HTML content here -->                                     
+    <script src="camera_control_obj.js"></script>
+    <script src="detailed_control_objs.js"></script>
+    <script src="control_script.js"></script>   
+    <div data-role="page" id="home" data-theme="c">
+      <div data-role="content">	
+	<div id="branding">
+	  <h1>Camera Configurator </h1>
+	</div>
+	<div class="choice_list">
+	  <!-- <h1> What would you'd like to configure? </h1> -->
+	  <ul data-role="listview" data-inset="true" id="homeListView">
+	    <!-- <li id="linkReference" ><a href="index.html#detailed_control_reference" data-transition="slidedown"> <img src="generic_button.jpg"/> <h3 id="configLabel">default</h3></a></li> -->
+	    <li id="linkReference" ><a href="index.html#detailed_control_reference" data-transition="slidedown"> <h3 id="configLabel">default</h3></a></li>
+	  </ul>
+	</div>
+      </div>
+    </div><!-- /page -->
+
+    <div id="detailedControlReference" data-role="page" data-add-back-btn="true">
+      <div id="sectionHeader" data-role="header" id="detailConfigHeader">
+        <!-- <a id="headerButtonLogout" href="index.html#loginLogout" data-icon="gear" class="ui-btn-right">Logout</a> -->
+	    <a id="headerButtonLogout" data-role="button" style="display: block; " data-icon="gear" class="ui-btn-right"> Logout </a>
+	<h1>Camera Config</h1>
+      </div> 
+      <div id="roiReferenceImage"> </div>
+      <div data-role="content" id="controlContent">
+	<!-- <div class="ui-grid-a" id="configControlItemsReference"> -->
+	<div id="configControlItemsReference">
+	  <label class="specialLabel" id="labelReference" for="basic" style="display: block; text-align : left; font-size: 16pt;">Text Input:</label>
+	  <input id="inputReference" type="text" name="name" id="basic" style="display: block; " value="default"></input>
+	  <a id="buttonReference" data-role="button" style="display: block; " data-icon="maps"> default </a>
+	  <div id="toggleReference" class="ui-grid-a">
+	    <div class="ui-block-a" style="width:35%">
+	      <label id="toggleLabel" for="flip-1" style="font-size: 16pt;">Flip switch:</label>
+	    </div>
+	    <div class="ui-block-b" style="width:65%">
+	      <select name="flip-1" id="flip-1" data-role="slider">
+		<option id="opt1" value="off">Off</option>
+		<option id="opt2" value="on">On</option>
+	      </select>
+	    </div>
+	  </div>
+	  <div id="calendarReference" class="ui-grid-a">
+	    <div class="ui-block-a" style="width:35%">
+	      <label id="calendarLabel" for="calendarCalendar" style="font-size: 16pt;">calendar</label>
+	    </div>
+	    <div class="ui-block-b" style="width:63%">
+	      <input id="calendarCalendar" name="mydate" type="date" data-role="datebox"
+		     data-options='{"mode": "calbox"}'>
+	      </input>
+	    </div>
+	  </div>
+	  <div id="labelInputReference" class="ui-grid-a">
+	    <div class="ui-block-a" style="width:35%">
+	      <label id="inputLabel" for="calendarCalendar" style="font-size: 16pt;">inputLabel</label>
+	    </div>
+	    <div class="ui-block-b" style="width:65%">
+	      <input id="labelInput" type="text" name="name" id="basic" style="display: block; " value="default"></input>
+	    </div>	    
+	  </div>
+	  <div id="dualButtonReference" class="ui-grid-a">
+	    <div class="ui-block-a">
+	      <a id="buttonA" data-role="button" style="display: block; " data-icon="maps"> default </a>
+	    </div>
+	    <div class="ui-block-b">
+	      <a id="buttonB" data-role="button" style="display: block; " data-icon="maps"> default </a>
+	    </div>	    
+	  </div>
+	  <input id="sliderReference" type="range" name="slider-2" value="25" min="0" max="100"  />
+	  <fieldset id="radioReference" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">
+	    <legend>radio button name</legend>
+	    <input type="radio" name="radio-choice" id="radio-choice-reference" value="choice-1"/>
+	    <label for="radio-choice-reference" id="radio-label-reference">reference</label>
+	  </fieldset>
+          <form id="fileUploadReference" action=" "
+                enctype="multipart/form-data" method="post" target="hiddenIFrame">
+<!--                 enctype="application/x-www-form-urlencoded" method="post" target="hiddenIFrame"> -->
+<!--               <input id = "theFileName" type="hidden" name="file" value=" " /> -->
+              <input type="file" name="datafile" size="40">
+<!--               <input type="file" name="datafile" size="40"> -->                 
+              <input type="submit" value="Send">
+          </form>
+	</div>
+	<hr/>
+	<div id="commandStatus">
+	</div>	
+        <iframe id="fileUploadHiddenIFrame" style="width:0px;height:0px;border:0px;" name=hiddenIFrame />
+      </div>
+    </div><!-- /page -->
+
+
+  </body>                                                                 
+</html>

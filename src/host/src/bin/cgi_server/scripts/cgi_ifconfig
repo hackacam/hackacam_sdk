@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# This script parses cgi_state.txt and if dhcp=0, sets up static IP address and returns success (0)
+# otherwise return 1 and dhclient should be started
+
+state=/mnt/flash/cgi/state.cgi
+test -r $state && {
+    device_info=$(grep '^device_info\?.*dhcp=0' $state)
+    test $device_info && {
+        device_info=$(echo $device_info | sed 's/^device_info\?//')
+        ip_address=$(echo $device_info | awk -F '=' 'BEGIN {RS="&"}; {if ($1 == "ip_address") print $2}')
+        subnet=$(echo $device_info | awk -F '=' 'BEGIN {RS="&"}; {if ($1 == "subnet") print $2}')
+        gateway=$(echo $device_info | awk -F '=' 'BEGIN {RS="&"}; {if ($1 == "gateway") print $2}')
+        ifconfig eth0 $ip_address netmask $subnet
+        route add default gw $gateway
+        echo "Static IP address: $ip_address $subnet $gateway" 
+        exit 0
+    }
+}
+exit 1

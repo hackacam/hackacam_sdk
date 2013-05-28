@@ -1,0 +1,132 @@
+method:       OPTIONS
+cseq:         19
+session_id:   ----
+url:          rtsp://192.168.1.144/qcif.264
+stream_name:  qcif.264
+accept:       ----
+client_port0: 0
+client_port1: 0
+transport:    0
+state:        0
+####
+method:       DESCRIBE
+cseq:         20
+session_id:   ----
+url:          rtsp://192.168.1.144/qcif.264
+stream_name:  qcif.264
+accept:       application/sdp
+client_port0: 0
+client_port1: 0
+transport:    0
+state:        0
+####
+method:       SETUP
+cseq:         21
+session_id:   ----
+url:          rtsp://192.168.1.144/qcif.264/track1
+stream_name:  qcif.264/track1
+accept:       ----
+client_port0: 0
+client_port1: 0
+transport:    2
+state:        1
+####
+method:       PLAY
+cseq:         22
+session_id:   B9352380
+url:          rtsp://192.168.1.144/qcif.264
+stream_name:  qcif.264
+accept:       ----
+client_port0: 0
+client_port1: 0
+transport:    0
+state:        2
+####
+method:       GET_PARAMETER
+cseq:         23
+session_id:   B9352380
+url:          rtsp://192.168.1.144/qcif.264
+stream_name:  qcif.264
+accept:       ----
+client_port0: 0
+client_port1: 0
+transport:    0
+state:        2
+####
+method:       TEARDOWN
+cseq:         24
+session_id:   B9352380
+url:          rtsp://192.168.1.144/qcif.264
+stream_name:  qcif.264
+accept:       ----
+client_port0: 0
+client_port1: 0
+transport:    0
+state:        0
+####
+method:       OPTIONS
+cseq:         25
+session_id:   ----
+url:          rtsp://192.168.1.144/qcif.264
+stream_name:  qcif.264
+accept:       ----
+client_port0: 0
+client_port1: 0
+transport:    0
+state:        0
+####
+method:       DESCRIBE
+cseq:         26
+session_id:   ----
+url:          rtsp://192.168.1.144/qcif.264
+stream_name:  qcif.264
+accept:       application/sdp
+client_port0: 0
+client_port1: 0
+transport:    0
+state:        0
+####
+method:       SETUP
+cseq:         27
+session_id:   ----
+url:          rtsp://192.168.1.144/qcif.264/track1
+stream_name:  qcif.264/track1
+accept:       ----
+client_port0: 60340
+client_port1: 60341
+transport:    1
+state:        1
+####
+method:       PLAY
+cseq:         28
+session_id:   BD688D28
+url:          rtsp://192.168.1.144/qcif.264
+stream_name:  qcif.264
+accept:       ----
+client_port0: 0
+client_port1: 0
+transport:    0
+state:        2
+####
+method:       GET_PARAMETER
+cseq:         29
+session_id:   BD688D28
+url:          rtsp://192.168.1.144/qcif.264
+stream_name:  qcif.264
+accept:       ----
+client_port0: 0
+client_port1: 0
+transport:    0
+state:        2
+####
+method:       TEARDOWN
+cseq:         30
+session_id:   BD688D28
+url:          rtsp://192.168.1.144/qcif.264
+stream_name:  qcif.264
+accept:       ----
+client_port0: 0
+client_port1: 0
+transport:    0
+state:        0
+####

@@ -1,0 +1,88 @@
+<html>
+<!--
+<OWNER> = revolunet
+<ORGANIZATION> = revolunet - Julien Bouquillon
+<YEAR> = 2010
+
+Copyright (c) 2010, revolunet
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met :
+
+
+ Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+ Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. 
+ Neither the name of the <ORGANIZATION> nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES ; LOSS OF USE, DATA, OR PROFITS ; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+-->
+    <head>
+    
+    <!-- you dont need to host these files -->
+    <!-- <link rel="stylesheet" href="jquery.mobile.structure-1.1.1.min.css" /> -->
+    <!-- <link rel="stylesheet" href="jquery.mobile-1.1.1.min.css" /> -->
+    <script src="jquery-1.8.1.min.js"></script>     
+    <!-- <script src="jquery.mobile-1.1.1.min.js"></script> -->
+    <script language="javascript" src="jquery-vlc.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" href="jquery.mobile.structure-1.1.1.min.css" />
+    <link rel="stylesheet" href="jquery.mobile-1.1.1.min.css" />
+    <link rel="stylesheet" href="camera_control.css" />
+    <link rel="stylesheet" type="text/css" href="jqm-datebox.min.css" /> 
+
+    <script src="jquery-1.8.1.min.js"></script>     
+    <script src="jquery.mobile-1.1.1.min.js"></script>
+    
+    
+    <script language="javascript">
+      
+      var serverip = window.location.hostname;
+
+      function play(instance, uri) {
+      var stream = uri.split("/");
+      stream = stream[stream.length-1];
+      $("#playerTitle").text("Stream Player: Stream " + stream);
+      VLCobject.getInstance(instance).play(uri);
+      }
+      
+      var player = null;
+      
+      $(document).ready(function() {                
+      player = VLCobject.embedPlayer('vlc1', 480, 270, true);
+      var baseUrl = "rtsp://" + serverip + "/video/";
+      $("#url").text(baseUrl);
+      var defaultCh = $("#channelSelection").find("input[value=0]");
+      defaultCh.attr("checked", true);
+      $("#channelSelection").find("input").checkboxradio("refresh");
+      });
+
+    </script>
+    <style>
+      body {
+      font-family:courier
+      }
+      
+    </style>
+
+    </head>
+    <body>
+        <h2 id='playerTitle'>Stream Player</h2>
+
+        <div id='vlc1'>player 1</div>
+        <br><br>
+	      <label class="urlLabel" id="url" for="basic" style="display: block; text-align : left; font-size: 12pt;">url: </label>        
+	  <fieldset id="channelSelection" data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">
+	    <!-- <legend>radio button name</legend> -->
+	    <input type="radio" name="radio-choice" id="radio-choice-1" value="0"/>
+	    <label for="radio-choice-1" id="radio-label-1">ch0</label>
+	    <input type="radio" name="radio-choice" id="radio-choice-2" value="1"/>
+	    <label for="radio-choice-2" id="radio-label-2">ch1</label>
+	    <input type="radio" name="radio-choice" id="radio-choice-3" value="2"/>
+	    <label for="radio-choice-3" id="radio-label-3">ch2</label>
+	    <input type="radio" name="radio-choice" id="radio-choice-4" value="3"/>
+	    <label for="radio-choice-4" id="radio-label-4">ch3</label>
+	  </fieldset>
+    <button onclick="play('vlc1', $('#url').text() + $('#channelSelection').find('input:checked').val())">play</button>
+    </body>
+</html> 

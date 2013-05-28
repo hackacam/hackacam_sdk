@@ -1,0 +1,267 @@
+/*! @defgroup RTSP_Server RTSP Server
+
+This RTSP server library can stream file contents to VLC clients, using RTP over UDP or RTP over TCP (interleaved in RTSP).
+The main design objective is to support live streaming from SDK (or A2A) callback, but streaming from files is also supported for testing purposes.
+
+<h2>CURRENT LIMITATIONS</h2>
+The server currently supports VLC clients only.
+
+<h2>APPLICATIONS</h2>
+RTSP Server is intended to be used as library, but for testing and evaluation purposes, there is a standalone application 'rtsp_server'. 
+
+The application provides option help on command line with -h option and uses the rtsp library. 
+
+<h2>INTEGRATION WITH AN APPLICATION</h2>
+This section describes steps necessary to integrate RTSP Server with a streaming application.
+<h3>Callback</h3>
+RTSP::Server assumes that a callback is used to send out frames. A global function rtsp_send_frame() must be called from a callback to accomplish this.
+@note This function overwrites the frame content, which is therefore unusable after the rtsp_send_frame() returns. It also assumes that there is at least 17 bytes free @b in @b front of the frame, which is used to write RTP headers.
+<h3>Server instantiation</h3>
+The RTSP::Server may be created using RTSP::Server::create() function. When it is created, the server starts a new thread, listening to connection requests from clients. 
+<h3>Application</h3>
+RTSP::Server relies on the application to convert stream names (from URL) and stream and channel numbers (from the callback) 
+to stream_id. Any application using RTSP::Server must create an object derived from pure abstract class RTSP::Application and implement the required methods. In addition, the application must define a global function RTSP::Application* application() that returns a pointer to that object. These methods are:
+    - int get_stream_id(): return a unique stream ID based on channel number and stream number or based on stream name
+    - void play(): start playing the stream (i.e. enable callback, so that rtsp_send_frame() is being called)
+    - void teardown(): stop playing stream
+    - int describe(): provide basic stream parameters (encoder type, bitrate, etc...)
+
+<h3>Headers</h3>
+The application must include rtsp.h header, which in turns includes rtsp_server.h.
+<h3>Dependencies</h3>
+The server depends on SBL (Stretch Base Library) classes, but does not depend on Stretch SDK. However, any application using RTSP library will necesserily use SDK to configure the encoders.
+<h3>Standalone programs</h3>
+The standalone program rtsp_server implements dummy RTSP::App class, which provides required services.
+The corresponding object is instantiated in the main_rtsp_server.cpp and is therefore missing from the library.
+
+<h2>DESIGN</h2>
+Following objects are used in this implementation, they all reside in RTSP namespace.
+    - RTSP::Server is instantiated in the main application and listens for incoming rtsp:: connection requests. When a new request comes, Server starts a new RTSP::Talker thread to service it.  That class uses two helper classes to parse and reply to client requests:
+        - RTSP::Parser parses incoming requests
+        - RTSP::Responder forwards actions back to Server and generates a reply to the client
+    - RTSP::SourceMap maintains a map of Sources
+    - RTSP::Source abstract class to send or generate frames
+        - RTSP::LiveSource derives from Source and manages live sources
+        - RTSP::FileSource derives from Source and manages files sources
+    - RTSP::Streamer sends frames to clients as RTP packets.
+        - RTSP::Streamer::Client represents a single remote client
+    - RTSP::RTCP::Parser parses incoming RTCP packets
+
+These objects keep pointers to each other so that traversal of the object tree is possible.
+
+@image html rtsp_server_objects.jpg "RTSP Server Objects"
+
+Both RTSP::FileSource and RTSP::LiveSource derive from abstract RTSP::Source class, but they implementation is different. RTSP::LiveSource objects are instantiated when application starts. The main reason for that is that they cache sps/pps frames, which are necessary to generate SDP description in response to client DESCRIBE request. After that, RTSP::LiveSource simply forwards a frame to appropriate RTSP::Streamer object. RTSP::Since LiveSource is called from SDK callback, it doesn't need any special scheduling methods. A SETUP method for a RTSP::LiveSource adds a client to the list of clients serviced by the associated RTSP::Streamer. A PLAY method simply resets a streamer flag which blocks sending RTP packets, while TEARDOWN method removes that client from list of client serviced.
+
+RTSP::FileSource objects (and associated RTSP::Streamer objects) are created on demand, in response to SETUP request. After PLAY message is received, RTSP::FileSource starts a new thread, which schedules frame transmission every N miliseconds. When TEARDOWN is received, client is removed and if there are no clients anymore, both RTSP::FileSource and RTSP::Streamer are deleted and the thread is terminated.
+
+In summary, at any given point in time:
+    - there is always a single instance of master RTSP::Server.
+    - Each connection request creates a new instance of slave RTSP::Server, which runs in a new thread.
+    - there is exactly one instance of RTSP::Parser and RTSP::Responder per one slave RTSP::Server
+    - Each source (live or file) has exactly one RTSP::Source object and one RTSP::Streamer object, and that RTSP::Streamer services all clients who requested the stream served by the StreamSource.
+    - RTSP::LiveSource (and their RTSP::Streamer) are instantiated at initialization and never destroyed. Clients may be added to or removed from them.
+    - RTSP::FileSource (and their RTSP::Streamer) are instantiated on demand, upon reception of SETUP request and destroyed when all clients requesting given file are disconnected. RTSP::FileSource starts new thread when it receives a PLAY message and terminates that thread when it receives TEARDOWN messages.
+
+@image html rtsp_server_arch.jpg "RTSP Server Architecture"
+
+<h2>CONTROL AND MESSAGE PASSING</h2>
+This section describes how remote client messages (describe, setup, play, teardown) are routed in the system.
+
+<h3>State information about remote clients:</h3>
+RTSP::SourceMap maintains two maps: 
+    -# stream_name  -> source 
+    -# stream_id    -> source
+    
+<h3>Describe</h3>
+    -# RTSP::Responder::reply()    : call source = server->get_source(stream_name). Uses source->payload_type() and source->write_param_set() to reply.
+    -# RTSP::Talker::get_source()  : lookups source in source_map (by stream_name) and returns it if it finds it. Otherwise, creates Source and Streamer and installs it in the source_map.
+
+@note   Since Describe reply requires SPS/PPS information, the corresponding live stream must to be enabled in SCP, so that callback is called and SPS/PPS is saved in the Source. 
+
+@note  Normally, Source/Streamer created in Describe will be used in the following Setup command, but it doesn't have to. 
+       If a remote client issues multiple Describe commands, without corresponding Setup/Play/Teardown sequences, corresponding
+       Sources and Streamers will never be destroyed. However, this is unlikely to happen in practice. 
+
+<h3>Setup</h3>
+    -# Responder::reply_setup() : calls either server->setup_udp(stream_name, client_port) or server->setup_tcp(stream_name)
+                                  Both methods return SessionID, which is returned to the client.
+    -# Talker::setup_udp()      : creates socket for the client
+                                  looks up Source in source_map by stream_name and retrieves the Source and associated Streamer.
+                                  If Source doesn't exist (unlikely, see Describe above), creates it and the associated Streamer, inserts Source 
+                                  in source_map.  It then calls streamer->add_client(socket)
+                                  At this point, Source does not yet send frames to the streamer.
+    -# Talker::setup_tcp()      : uses tcp socket used for rtsp conversation, remaining part is as for setup_udp
+
+<h3>Play</h3>
+    -# Responder::reply_play()  : Client and Source must exist because they were created by Setup method.
+                                  It uses client->timestamp() and client->seq_number() to send back initial timestamps and sequence numbers to the remote client. 
+
+@note   Client might not be getting yet any frames, so it may not know timestamps, therefore client always retrieves timestamp from Source
+        using client->streamer()->source()->timestamp() calls. Sequence numbers are initialized and maintained by clients.
+@note   client->play() enables playing and calls source->play() to start sending frames. source->play() must check if it is already playing
+        and start otherwise (for FileSource it involves new thread, for LiveSource it just flips a blocker flag).
+
+<h3>Teardown</h3>
+    -# Responder::reply_teardown() : calls server->teardown()
+    -# Talker                      : deletes RTCP::Parser object, deletes the clients associated with this slave server and, for FileSource if 
+                                     there are no more clients, deletes also the file source.
+
+<h2>LIVE STREAMING</h2>
+The SDK callback receives a frame from SCP and verifies frame type (H264, MJPEG or MPEG4).
+The callback recovers frame timestamps and forwards the whole frame to rtsp_send_frame() function, together with channel number,
+frame pointer and frame size. The rtsp_send_frame() calls RTSP::Server::get_source() with channel number to get associated RTSP::LiveSource. If the source hasn't been created, RTSP::Server will create it with this call. rtsp_send_frame() then calls RTSP::LiveSource::send_frame() with frame pointer, frame_size and timestamp.
+
+RTSP::LiveSource::send_frame() verifies if the frame is SPS or PPS, caches them if they are and forwards the frame to the associated RTSP::Streamer. The caching is necessary, because RTSP::Server needs contents of SPS and PPS frames to reply to DESCRIBE request.
+
+RTSP::Streamer::send_frame() creates RTP header and prepends it in front of the frame. Therefore, it is mandatory that space @b in @b front of frame pointer is free, which is the case for frames forwarded by SCP. After creating the frame, RTSP::Streamer::send_packet() is called as many times as necessary, each time prepending pre-built RTP Header in front of the packet. Due to this, the content of the frame is destroyed during the send process and the frame cannot be reused.
+
+RTSP::Streamer::send_packet() walks the list of RTSP::Streamer::Client associated with this RTSP::Streamer and sends the packet to each one (assuming their @e play flag is set) using a socket call. Therefore, each client receiving a given stream receives exactly the same packet sequence.
+
+<h2>RTSP Protocol</h2>
+A typical exchange between server and client (VLC):\n\n
+<h3>OPTIONS</h3>
+Client->Server:   request list of methods supported by the server@verbatim
+OPTIONS rtsp://192.168.1.144/qcif.264 RTSP/1.0\r\n
+CSeq: 25\r\n
+User-Agent: VLC media player (LIVE555 Streaming Media v2009.04.20)\r\n
+\r\n
+@endverbatim
+
+Each line terminates with \\r\\n. Messages terminate with an empty line. Client starts with OPTIONs method, followed by URL and RTSP version. The sequence
+number is used to pair requests and reply. Finally the client identifies itself (RTSP::Server ignores the this).
+
+Server->Client: Reply what Methods the server supports:@verbatim
+RTSP/1.0 200 OK\r\n
+CSeq: 25\r\n
+Date: Wed, Dec 28 2011 01:49:15 GMT\r\n
+Public: OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE, GET_PARAMETER, SET_PARAMETER\r\n
+\r\n
+@endverbatim
+
+<h3>DESCRIBE</h3>
+Client->Server: Request to describe a particular stream, here the file qcif.264: @verbatim
+DESCRIBE rtsp://192.168.1.144/qcif.264 RTSP/1.0\r\n
+CSeq: 26\r\n
+Accept: application/sdp\r\n
+User-Agent: VLC media player (LIVE555 Streaming Media v2009.04.20)\r\n
+\r\n
+@endverbatim
+
+Client also tells the server that is accepts descriptions in SDP format. This is the only format that RTSP::Server supports.
+
+Server->Client: Reply with description of the stream:@verbatim
+RTSP/1.0 200 OK\r\n
+CSeq: 26\r\n
+Date: Wed, Dec 28 2011 01:49:15 GMT\r\n
+Content-Base: rtsp://192.168.1.144/qcif.264/\r\n
+Content-Type: application/sdp\r\n
+Content-Length: 521\r\n
+\r\n
+v=0\r\n
+o=- 1325036549280912 1 IN IP4 192.168.1.144\r\n
+s=H.264 Video, streamed by the LIVE555 Media Server\r\n
+i=qcif.264\r\n
+t=0 0\r\n
+a=tool:LIVE555 Streaming Media v2011.11.20\r\n
+a=type:broadcast\r\n
+a=control:*\r\n
+a=range:npt=0-\r\n
+a=x-qt-text-nam:H.264 Video, streamed by the LIVE555 Media Server\r\n
+a=x-qt-text-inf:qcif.264\r\n
+m=video 0 RTP/AVP 96\r\n
+c=IN IP4 0.0.0.0\r\n
+b=AS:500\r\n
+a=rtpmap:96 H264/90000\r\n
+a=fmtp:96 packetization-mode=1;profile-level-id=640028;sprop-parameter-sets=Z2QAKKzSCxH5cBEAAAMAAQAAAwA8jwiEag==,aM48MA==\r\n
+a=control:track1\r\n
+@endverbatim
+
+The length of the whole section following the empty line is present in the Content-Length field.
+
+<h3>SETUP</h3>
+Client->server: Request to setup the stream:@verbatim
+SETUP rtsp://192.168.1.144/qcif.264/track1 RTSP/1.0\r\n
+CSeq: 27\r\n
+Transport: RTP/AVP;unicast;client_port=60340-60341\r\n
+User-Agent: VLC media player (LIVE555 Streaming Media v2009.04.20)\r\n
+\r\n
+@endverbatim
+
+Here, the request was for UDP stream (Transport= line) to client ports 60340 (RTP) and 60341(RTPC). A TCP interleaved stream
+would have the following request:@verbatim
+Transport: RTP/AVP/TCP;unicast;interleaved=0-1\r\n
+@endverbatim
+
+Server->client: Replies with a session ID.@verbatim
+RTSP/1.0 200 OK\r\n
+CSeq: 27\r\n
+Date: Wed, Dec 28 2011 01:49:15 GMT\r\n
+Transport: RTP/AVP;unicast;destination=192.168.1.101;source=192.168.1.144;client_port=60340-60341;server_port=6970-6971\r\n
+Session: BD688D28\r\n
+\r\n
+@endverbatim
+
+For TCP session, server response would be slightly different:@verbatim
+Transport: RTP/AVP/TCP;unicast;destination=192.168.1.101;source=192.168.1.144;interleaved=0-1\r\n
+@endverbatim
+
+Server assigns a session ID, which will be used to identify this session and repeats server and client addresses.
+
+<h3>PLAY</h3>
+Client->Server: Client can now request that the stream is played: @verbatim
+PLAY rtsp://192.168.1.144/qcif.264/ RTSP/1.0\r\n
+CSeq: 28\r\n
+Session: BD688D28\r\n
+Range: npt=0.000-\r\n
+User-Agent: VLC media player (LIVE555 Streaming Media v2009.04.20)\r\n
+\r\n
+@endverbatim
+
+Although clients may indicate start time, RTSP::Server ignores this field (Range:)
+
+Server->Client: Server confirms playback and provides an initial TP sequence number and timestamp:@verbatim
+RTSP/1.0 200 OK\r\n
+CSeq: 28\r\n
+Date: Wed, Dec 28 2011 01:49:15 GMT\r\n
+Range: npt=0.000-\r\n
+Session: BD688D28\r\n
+RTP-Info: url=rtsp://192.168.1.144/qcif.264/track1;seq=16357;rtptime=1313246283\r\n
+\r\n
+@endverbatim
+
+<h3>GET_PARAMETER</h3>
+Client->Server: During playback, Client uses GET_PARAMETER method to ping server and ensure TCP conection remains open:@verbatim
+GET_PARAMETER rtsp://192.168.1.144/qcif.264/ RTSP/1.0\r\n
+CSeq: 29\r\n
+Session: BD688D28\r\n
+User-Agent: VLC media player (LIVE555 Streaming Media v2009.04.20)\r\n
+\r\n
+@endverbatim
+
+Server->Client: The reply is just an acknowledgement:@verbatim
+RTSP/1.0 200 OK\r\n
+CSeq: 29\r\n
+Date: Wed, Dec 28 2011 01:49:15 GMT\r\n
+Session: BD688D28\r\n
+\r\n
+@endverbatim
+
+<h3>TEARDOWN</h3>
+Client->Server: Finally, the client request to stop the playback@verbatim
+TEARDOWN rtsp://192.168.1.144/qcif.264/ RTSP/1.0\r\n
+CSeq: 30\r\n
+Session: BD688D28\r\n
+User-Agent: VLC media player (LIVE555 Streaming Media v2009.04.20)\r\n
+\r\n
+@endverbatim
+
+Server->Client: and the server confirms the command:@verbatim
+RTSP/1.0 200 OK\r\n
+CSeq: 30\r\n
+Date: Wed, Dec 28 2011 01:49:25 GMT\r\n
+\r\n
+@endverbatim
+
+*/
+                                 

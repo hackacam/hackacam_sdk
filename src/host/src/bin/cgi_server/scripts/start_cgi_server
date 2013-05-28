@@ -1,0 +1,15 @@
+#!/bin/sh
+# This script starts CGI server
+
+# Copy state file from old location to new location, if it doesn't exist
+test -r /mnt/flash/cgi_state.txt -a  ! -r /mnt/flash/cgi/state.cgi \
+    && mkdir -p /mnt/flash/cgi \
+    && mv /mnt/flash/cgi_state.txt /mnt/flash/cgi/state.cgi \
+    && reboot
+export STRETCH_SERVER_HOME=/usr/local/stretch
+lighttpd -f  $STRETCH_SERVER_HOME/conf/lighttpd_cgi_server.conf
+# print banner
+$STRETCH_SERVER_HOME/bin/cgi_server -v 2>&1
+sleep 2
+echo Server started
+

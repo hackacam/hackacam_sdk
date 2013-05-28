@@ -1,0 +1,94 @@
+OPTIONS rtsp://192.168.1.144/qcif.264 RTSP/1.0\r\n
+CSeq: 25\r\n
+User-Agent: VLC media player (LIVE555 Streaming Media v2009.04.20)\r\n
+\r\n
+
+RTSP/1.0 200 OK\r\n
+CSeq: 25\r\n
+Date: Wed, Dec 28 2011 01:49:15 GMT\r\n
+Public: OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE, GET_PARAMETER, SET_PARAMETER\r\n
+\r\n
+
+DESCRIBE rtsp://192.168.1.144/qcif.264 RTSP/1.0\r\n
+CSeq: 26\r\n
+Accept: application/sdp\r\n
+User-Agent: VLC media player (LIVE555 Streaming Media v2009.04.20)\r\n
+\r\n
+
+RTSP/1.0 200 OK\r\n
+CSeq: 26\r\n
+Date: Wed, Dec 28 2011 01:49:15 GMT\r\n
+Content-Base: rtsp://192.168.1.144/qcif.264/\r\n
+Content-Type: application/sdp\r\n
+Content-Length: 521\r\n
+\r\n
+v=0\r\n
+o=- 1325036549280912 1 IN IP4 192.168.1.144\r\n
+s=H.264 Video, streamed by the LIVE555 Media Server\r\n
+i=qcif.264\r\n
+t=0 0\r\n
+a=tool:LIVE555 Streaming Media v2011.11.20\r\n
+a=type:broadcast\r\n
+a=control:*\r\n
+a=range:npt=0-\r\n
+a=x-qt-text-nam:H.264 Video, streamed by the LIVE555 Media Server\r\n
+a=x-qt-text-inf:qcif.264\r\n
+m=video 0 RTP/AVP 96\r\n
+c=IN IP4 0.0.0.0\r\n
+b=AS:500\r\n
+a=rtpmap:96 H264/90000\r\n
+a=fmtp:96 packetization-mode=1;profile-level-id=640028;sprop-parameter-sets=Z2QAKKzSCxH5cBEAAAMAAQAAAwA8jwiEag==,aM48MA==\r\n
+a=control:track1\r\n
+
+
+SETUP rtsp://192.168.1.144/qcif.264/track1 RTSP/1.0\r\n
+CSeq: 27\r\n
+Transport: RTP/AVP;unicast;client_port=60340-60341\r\n
+User-Agent: VLC media player (LIVE555 Streaming Media v2009.04.20)\r\n
+\r\n
+
+RTSP/1.0 200 OK\r\n
+CSeq: 27\r\n
+Date: Wed, Dec 28 2011 01:49:15 GMT\r\n
+Transport: RTP/AVP;unicast;destination=192.168.1.101;source=192.168.1.144;client_port=60340-60341;server_port=6970-6971\r\n
+Session: BD688D28\r\n
+\r\n
+
+PLAY rtsp://192.168.1.144/qcif.264/ RTSP/1.0\r\n
+CSeq: 28\r\n
+Session: BD688D28\r\n
+Range: npt=0.000-\r\n
+User-Agent: VLC media player (LIVE555 Streaming Media v2009.04.20)\r\n
+\r\n
+
+RTSP/1.0 200 OK\r\n
+CSeq: 28\r\n
+Date: Wed, Dec 28 2011 01:49:15 GMT\r\n
+Range: npt=0.000-\r\n
+Session: BD688D28\r\n
+RTP-Info: url=rtsp://192.168.1.144/qcif.264/track1;seq=16357;rtptime=1313246283\r\n
+\r\n
+
+GET_PARAMETER rtsp://192.168.1.144/qcif.264/ RTSP/1.0\r\n
+CSeq: 29\r\n
+Session: BD688D28\r\n
+User-Agent: VLC media player (LIVE555 Streaming Media v2009.04.20)\r\n
+\r\n
+
+RTSP/1.0 200 OK\r\n
+CSeq: 29\r\n
+Date: Wed, Dec 28 2011 01:49:15 GMT\r\n
+Session: BD688D28\r\n
+\r\n
+
+TEARDOWN rtsp://192.168.1.144/qcif.264/ RTSP/1.0\r\n
+CSeq: 30\r\n
+Session: BD688D28\r\n
+User-Agent: VLC media player (LIVE555 Streaming Media v2009.04.20)\r\n
+\r\n
+
+RTSP/1.0 200 OK\r\n
+CSeq: 30\r\n
+Date: Wed, Dec 28 2011 01:49:25 GMT\r\n
+\r\n
+
